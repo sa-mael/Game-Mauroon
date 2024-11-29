@@ -9,6 +9,8 @@ PLAYER_SIZE = 22
 SCALE_SIZE = 2
 BACKGROUND_COLOR = (50, 50, 50)
 
+
+
 # --- Initialize pygame ---
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -81,9 +83,11 @@ class World:
 
 # --- Player Setup ---
 class Player:
-    def __init__(self, x, y):
+    def __init__(self, x, y,speed=1):
         self.grid_x = x
         self.grid_y = y
+        self.speed = speed
+        
 
     def move(self, direction, world):
         new_x, new_y = self.grid_x, self.grid_y
@@ -97,11 +101,13 @@ class Player:
             new_x += 1
 
         # Check map boundaries
-        if 0 <= new_x < len(world.map_data[1][0]) and 0 <= new_y < len(world.map_data[1]):
-        # Проверяем, что клетка на втором слое не пуста
-            if world.map_data[1][new_y][new_x] > 0:  # 1 - это индекс второго слоя
-                self.grid_x, self.grid_y = new_x, new_y
-
+        if (
+            0 <= new_x < len(world.map_data[1][0]) and  # Проверка границ по X
+            0 <= new_y < len(world.map_data[1]) and    # Проверка границ по Y
+            world.map_data[1][new_y][new_x] > 0        # Проверка, что на втором слое есть блок
+        ):
+            self.grid_x, self.grid_y = new_x, new_y
+            
     def draw(self):
         iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 2
         iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 4
@@ -112,7 +118,12 @@ class Player:
 
 # --- Game Setup ---
 world = World()
-player = Player(2, 2)
+player = Player(2, 2, speed=2)  # Скорость игрока 2
+
+player.speed = 1  # Установить медленное движение
+player.speed = 3  # Установить быстрое движение
+
+
 
 # --- Game Loop ---
 running = True
