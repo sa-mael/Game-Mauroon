@@ -2,8 +2,8 @@ import pygame
 import sys
 
 # --- Constants ---
-SCREEN_WIDTH = 1360
-SCREEN_HEIGHT = 940
+SCREEN_WIDTH = 1260
+SCREEN_HEIGHT = 840
 BLOCK_SIZE = 22
 PLAYER_SIZE = 22
 SCALE_SIZE = 2

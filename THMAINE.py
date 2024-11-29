@@ -5,7 +5,7 @@ import sys
 SCREEN_WIDTH = 1260
 SCREEN_HEIGHT = 840
 BLOCK_SIZE = 22
-PLAYER_SIZE = 22 
+PLAYER_SIZE = 22
 SCALE_SIZE = 2
 BACKGROUND_COLOR = (50, 50, 50)
 
@@ -76,8 +76,8 @@ class World:
                         texture = TEXTURES.get(str(block), None)
                         if texture:
                             iso_x = (x - y) * BLOCK_SIZE * SCALE_SIZE // 2
-                            iso_y = (x + y) * BLOCK_SIZE * SCALE_SIZE // 4 - layer_index * BLOCK_SIZE // 2
-                            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3))
+                            iso_y = (x + y) * BLOCK_SIZE * SCALE_SIZE // 4 - layer_index * BLOCK_SIZE * SCALE_SIZE // 2
+                            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3.5))
 
 # --- Player Setup ---
 class Player:
@@ -97,8 +97,10 @@ class Player:
             new_x += 1
 
         # Check map boundaries
-        if 0 <= new_x < len(world.map_data[0][0]) and 0 <= new_y < len(world.map_data[0]):
-            self.grid_x, self.grid_y = new_x, new_y
+        if 0 <= new_x < len(world.map_data[1][0]) and 0 <= new_y < len(world.map_data[1]):
+        # Проверяем, что клетка на втором слое не пуста
+            if world.map_data[1][new_y][new_x] > 0:  # 1 - это индекс второго слоя
+                self.grid_x, self.grid_y = new_x, new_y
 
     def draw(self):
         iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 2
