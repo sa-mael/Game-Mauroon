@@ -31,7 +31,8 @@ TEXTURES = {
     "1": load_texture("img/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Bottom layer
     "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Middle layer
     "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), 
-    "4": load_texture("img/grass1.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Middle layer
+    "4": load_texture("img/grass1.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), 
+    "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # Middle layer
         # Top layer
     "empty": None,
 }
@@ -81,7 +82,7 @@ class World:
                         if texture:
                             iso_x = (x - y) * BLOCK_SIZE * scale_size // 2
                             iso_y = (x + y) * BLOCK_SIZE * scale_size // 4 - layer_index * BLOCK_SIZE * scale_size // 2
-                            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3.5))
+                            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2.18, iso_y + SCREEN_HEIGHT // 3.5))
 
 # --- Player Setup ---
 class Player:

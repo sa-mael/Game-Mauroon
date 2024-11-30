@@ -6,8 +6,9 @@ SCREEN_WIDTH = 1260
 SCREEN_HEIGHT = 840
 BLOCK_SIZE = 22
 PLAYER_SIZE = 22
-SCALE_SIZE = 2
+SCALE_SIZE = 2  # initial scale factor
 BACKGROUND_COLOR = (50, 50, 50)
+ZOOM_SPEED = 0.1  # Speed of zooming in/out
 
 # --- Initialize pygame ---
 pygame.init()
@@ -30,6 +31,7 @@ TEXTURES = {
     "1": load_texture("img/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Bottom layer
     "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Middle layer
     "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Top layer
+    "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # Special Block (permanent)
     "empty": None,
 }
 
@@ -40,6 +42,9 @@ class World:
     def __init__(self):
         self.layers = 3  # Number of layers (bottom, middle, top)
         self.map_data = self.load_map_from_file("maps/map.txt")  # Load map from file
+
+        # Add the special block (5) to a fixed position (e.g., 5,5 on layer 1)
+        self.special_block_position = (5, 5, 1)  # (x, y, layer) where block 5 will be placed
 
     def load_map_from_file(self, file_path):
         """Load map from a text file with layers."""
@@ -68,17 +73,25 @@ class World:
             print(f"Error loading map: {e}")
             sys.exit()
 
-    def render(self):
-        """Render the map layers in isometric view."""
+    def render(self, scale_size):
+        """Render the map layers in isometric view with current zoom level."""
         for layer_index, layer in enumerate(self.map_data):
             for y, row in enumerate(layer):
                 for x, block in enumerate(row):
                     if block > 0:  # Skip empty blocks
                         texture = TEXTURES.get(str(block), None)
                         if texture:
-                            iso_x = (x - y) * BLOCK_SIZE * SCALE_SIZE // 2
-                            iso_y = (x + y) * BLOCK_SIZE * SCALE_SIZE // 4 - layer_index * BLOCK_SIZE * SCALE_SIZE // 2
+                            iso_x = (x - y) * BLOCK_SIZE * scale_size // 2
+                            iso_y = (x + y) * BLOCK_SIZE * scale_size // 4 - layer_index * BLOCK_SIZE * scale_size // 2
                             screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3.5))
+
+        # Always render the special block 5 at its fixed position
+        x, y, layer = self.special_block_position
+        if layer < len(self.map_data):  # Check if the layer exists
+            texture = TEXTURES["5"]
+            iso_x = (x - y) * BLOCK_SIZE * scale_size // 2
+            iso_y = (x + y) * BLOCK_SIZE * scale_size // 4 - layer * BLOCK_SIZE * scale_size // 2
+            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3.5))
 
 # --- Player Setup ---
 class Player:
@@ -125,10 +138,10 @@ class Player:
             else:
                 print("Cannot move down; no block below.")
 
-    def draw(self):
+    def draw(self, scale_size):
         """Draw the player at the correct isometric position."""
-        iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 2
-        iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 4 - self.layer * BLOCK_SIZE * SCALE_SIZE // 2
+        iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE * scale_size // 2
+        iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE * scale_size // 4 - self.layer * BLOCK_SIZE * scale_size // 2
         screen.blit(
             PLAYER_TEXTURE,
             (
@@ -166,9 +179,18 @@ while running:
     if keys[pygame.K_LSHIFT]:  # Left Shift to move down
         player.jump("down", world)
 
+    # Handle zoom in/out with CTRL + mouse wheel
+    if pygame.key.get_pressed()[pygame.K_LCTRL]:  # If CTRL is pressed
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:  # Scroll up (zoom in)
+                    SCALE_SIZE += ZOOM_SPEED
+                elif event.button == 5:  # Scroll down (zoom out)
+                    SCALE_SIZE -= ZOOM_SPEED
+
     screen.fill(BACKGROUND_COLOR)
-    world.render()
-    player.draw()
+    world.render(SCALE_SIZE)  # Pass the current scale size for rendering
+    player.draw(SCALE_SIZE)
 
     pygame.display.flip()
     clock.tick(30)
