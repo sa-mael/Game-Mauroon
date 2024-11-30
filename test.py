@@ -16,18 +16,19 @@ pygame.display.set_caption("Isometric World")
 clock = pygame.time.Clock()
 
 # --- Load Textures ---
-def load_texture(path, WIDTH, HEIGHT, SCALE_SIZE):
+def load_texture(path, width, height, scale_size):
     """Load and scale a texture."""
     try:
         texture = pygame.image.load(path).convert_alpha()
-        return pygame.transform.scale(texture, (WIDTH * SCALE_SIZE, HEIGHT * SCALE_SIZE))
+        return pygame.transform.scale(texture, (width * scale_size, height * scale_size))
     except pygame.error as e:
         print(f"Error loading texture {path}: {e}")
         sys.exit()
 
+# Load textures into a dictionary
 TEXTURES = {
     "1": load_texture("img/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Bottom layer
-    "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Middle layer
+    "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Middle layer
     "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Top layer
     "empty": None,
 }
@@ -67,59 +68,78 @@ class World:
             print(f"Error loading map: {e}")
             sys.exit()
 
-    def render_layer(self, layer_index):
-        """Render a specific map layer."""
-        layer = self.map_data[layer_index]
-        for y, row in enumerate(layer):
-            for x, block in enumerate(row):
-                if block > 0:  # Skip empty blocks
-                    texture = TEXTURES.get(str(block), None)
-                    if texture:
-                        iso_x = (x - y) * BLOCK_SIZE * SCALE_SIZE // 2
-                        iso_y = (x + y) * BLOCK_SIZE * SCALE_SIZE // 4 - layer_index * BLOCK_SIZE // 2
-                        screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 4))
-
-    def is_block_passable(self, x, y):
-        """Check if a block is passable for the player."""
-        for layer_index in range(self.layers):
-            if 0 <= y < len(self.map_data[layer_index]) and 0 <= x < len(self.map_data[layer_index][y]):
-                block = self.map_data[layer_index][y][x]
-                if block == 1 or block == 3:  # Stone and tree are not passable
-                    return False
-        return True
+    def render(self):
+        """Render the map layers in isometric view."""
+        for layer_index, layer in enumerate(self.map_data):
+            for y, row in enumerate(layer):
+                for x, block in enumerate(row):
+                    if block > 0:  # Skip empty blocks
+                        texture = TEXTURES.get(str(block), None)
+                        if texture:
+                            iso_x = (x - y) * BLOCK_SIZE * SCALE_SIZE // 2
+                            iso_y = (x + y) * BLOCK_SIZE * SCALE_SIZE // 4 - layer_index * BLOCK_SIZE * SCALE_SIZE // 2
+                            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3.5))
 
 # --- Player Setup ---
 class Player:
-    def __init__(self, x, y):
+    def __init__(self, x, y, layer=1, speed=1):
         self.grid_x = x
         self.grid_y = y
+        self.layer = layer  # Player's current layer
+        self.speed = speed
 
     def move(self, direction, world):
+        """Move the player in a direction if possible."""
         new_x, new_y = self.grid_x, self.grid_y
         if direction == "up":
-            new_y -= 1
+            new_y -= self.speed
         elif direction == "down":
-            new_y += 1
+            new_y += self.speed
         elif direction == "left":
-            new_x -= 1
+            new_x -= self.speed
         elif direction == "right":
-            new_x += 1
+            new_x += self.speed
 
-        # Check collision
-        if world.is_block_passable(new_x, new_y):
+        # Check map boundaries and if there's a block on the current layer
+        if (
+            0 <= new_x < len(world.map_data[self.layer][0]) and  # Check X boundaries
+            0 <= new_y < len(world.map_data[self.layer]) and      # Check Y boundaries
+            world.map_data[self.layer][new_y][new_x] > 0          # Check for a block on the current layer
+        ):
             self.grid_x, self.grid_y = new_x, new_y
+        else:
+            print("Cannot move to that position.")
+
+    def jump(self, direction, world):
+        """Move up or down layers if possible."""
+        if direction == "up" and self.layer > 0:
+            # Attempt to move up a layer
+            if world.map_data[self.layer - 1][self.grid_y][self.grid_x] > 0:
+                self.layer -= 1
+            else:
+                print("Cannot jump up; no block above.")
+        elif direction == "down" and self.layer < world.layers - 1:
+            # Attempt to move down a layer
+            if world.map_data[self.layer + 1][self.grid_y][self.grid_x] > 0:
+                self.layer += 1
+            else:
+                print("Cannot move down; no block below.")
 
     def draw(self):
+        """Draw the player at the correct isometric position."""
         iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 2
-        iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 4
+        iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE * SCALE_SIZE // 4 - self.layer * BLOCK_SIZE * SCALE_SIZE // 2
         screen.blit(
             PLAYER_TEXTURE,
-            (iso_x + SCREEN_WIDTH // 2 - PLAYER_SIZE // 2, iso_y + SCREEN_HEIGHT // 4 - PLAYER_SIZE // 2),
+            (
+                iso_x + SCREEN_WIDTH // 2 - PLAYER_SIZE // 2,
+                iso_y + SCREEN_HEIGHT // 3.5 - PLAYER_SIZE // 2,
+            ),
         )
 
 # --- Game Setup ---
 world = World()
-player = Player(1, 3)
+player = Player(2, 2, layer=1, speed=1)  # Starting position and speed
 
 # --- Game Loop ---
 running = True
@@ -129,6 +149,8 @@ while running:
             running = False
 
     keys = pygame.key.get_pressed()
+
+    # Movement keys
     if keys[pygame.K_UP]:
         player.move("up", world)
     if keys[pygame.K_DOWN]:
@@ -138,9 +160,14 @@ while running:
     if keys[pygame.K_RIGHT]:
         player.move("right", world)
 
+    # Jumping up and down between layers
+    if keys[pygame.K_SPACE]:  # Spacebar to jump up
+        player.jump("up", world)
+    if keys[pygame.K_LSHIFT]:  # Left Shift to move down
+        player.jump("down", world)
+
     screen.fill(BACKGROUND_COLOR)
-    for i in range(world.layers):  # Render each layer in order
-        world.render_layer(i)
+    world.render()
     player.draw()
 
     pygame.display.flip()
