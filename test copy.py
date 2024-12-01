@@ -30,9 +30,8 @@ def load_texture(path, width, height, scale_size):
 TEXTURES = {
     "1": load_texture("img/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Bottom layer
     "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Middle layer
-    "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), 
-    "4": load_texture("img/grass1.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), 
-    "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # Middle layer
+    "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Top layer
+    "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # Special Block (permanent)
     "empty": None,
 }
 
@@ -43,6 +42,9 @@ class World:
     def __init__(self):
         self.layers = 3  # Number of layers (bottom, middle, top)
         self.map_data = self.load_map_from_file("maps/map.txt")  # Load map from file
+
+        # Add the special block (5) to a fixed position (e.g., 5,5 on layer 1)
+        self.special_block_position = (5, 5, 1)  # (x, y, layer) where block 5 will be placed
 
     def load_map_from_file(self, file_path):
         """Load map from a text file with layers."""
@@ -81,7 +83,15 @@ class World:
                         if texture:
                             iso_x = (x - y) * BLOCK_SIZE * scale_size // 2
                             iso_y = (x + y) * BLOCK_SIZE * scale_size // 4 - layer_index * BLOCK_SIZE * scale_size // 2
-                            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2.18, iso_y + SCREEN_HEIGHT // 3.50))
+                            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3.5))
+
+        # Always render the special block 5 at its fixed position
+        x, y, layer = self.special_block_position
+        if layer < len(self.map_data):  # Check if the layer exists
+            texture = TEXTURES["5"]
+            iso_x = (x - y) * BLOCK_SIZE * scale_size // 2
+            iso_y = (x + y) * BLOCK_SIZE * scale_size // 4 - layer * BLOCK_SIZE * scale_size // 2
+            screen.blit(texture, (iso_x + SCREEN_WIDTH // 2, iso_y + SCREEN_HEIGHT // 3.5))
 
 # --- Player Setup ---
 class Player:
@@ -135,8 +145,8 @@ class Player:
         screen.blit(
             PLAYER_TEXTURE,
             (
-                iso_x + SCREEN_WIDTH // 2 - PLAYER_SIZE // 2,
-                iso_y + SCREEN_HEIGHT // 3.5 - PLAYER_SIZE // 2,
+                iso_x + SCREEN_WIDTH // 1.967 - PLAYER_SIZE // 2,
+                iso_y + SCREEN_HEIGHT // 2.92 - PLAYER_SIZE // 2,
             ),
         )
 
@@ -177,6 +187,7 @@ while running:
                     SCALE_SIZE += ZOOM_SPEED
                 elif event.button == 5:  # Scroll down (zoom out)
                     SCALE_SIZE -= ZOOM_SPEED
+                    
 
     screen.fill(BACKGROUND_COLOR)
     world.render(SCALE_SIZE)  # Pass the current scale size for rendering
