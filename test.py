@@ -2,8 +2,8 @@ import pygame
 import sys
 
 # --- Constants ---
-SCREEN_WIDTH = 1260
-SCREEN_HEIGHT = 840
+SCREEN_WIDTH = 1360
+SCREEN_HEIGHT = 940
 BLOCK_SIZE = 22
 PLAYER_SIZE = 22
 SCALE_SIZE = 2  # initial scale factor
@@ -31,7 +31,7 @@ TEXTURES = {
     "1": load_texture("img/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 1
     "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 2
     "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Block type 3
-    "4": load_texture("img/grass1sssssss.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 4
+    "4": load_texture("img/grass1.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 4
     "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # Special Block (permanent)
     "empty": None,
 }
