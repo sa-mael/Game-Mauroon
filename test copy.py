@@ -187,7 +187,7 @@ while running:
                     SCALE_SIZE += ZOOM_SPEED
                 elif event.button == 5:  # Scroll down (zoom out)
                     SCALE_SIZE -= ZOOM_SPEED
-                    
+
 
     screen.fill(BACKGROUND_COLOR)
     world.render(SCALE_SIZE)  # Pass the current scale size for rendering
@@ -195,6 +195,6 @@ while running:
 
     pygame.display.flip()
     clock.tick(30)
-
+    #
 pygame.quit()
 sys.exit()
