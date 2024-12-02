@@ -1,5 +1,5 @@
 import pygame
-import sys
+import sys 
 
 # --- Constants ---
 SCREEN_WIDTH = 1360
