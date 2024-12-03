@@ -3,7 +3,7 @@
 import pygame
 import sys
 from config import BLOCK_SIZE, SCALE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
-from animated_sprite import AnimatedSprite
+from .animated_sprite import AnimatedSprite  # Changed to relative import
 
 class World:
     def __init__(self, map_file):

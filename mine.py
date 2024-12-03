@@ -1,4 +1,5 @@
-# main.py
+# mine.py
+#rostty
 
 import pygame
 import sys
