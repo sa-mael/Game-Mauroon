@@ -1,5 +1,5 @@
 import pygame
-import sys
+import sys 
 
 # --- Constants ---
 SCREEN_WIDTH = 1360
@@ -32,21 +32,11 @@ TEXTURES = {
     "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 2
     "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Block type 3
     "4": load_texture("img/grass1.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 4
-    "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # Special Block (permanent)
-    "6": load_texture("img/ARW2DSprite.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # New Block type 6
+    "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE), # Block type 5
     "empty": None,
 }
 
 PLAYER_TEXTURE = load_texture("img/player.png", PLAYER_SIZE, PLAYER_SIZE, SCALE_SIZE)
-
-# --- Block 6 Description ---
-BLOCK_6_DESCRIPTION = """
-Block 6: This is a special decorative block that adds visual appeal to the world.
-It is not interactable but can be used to create beautiful landscapes or structures.
-It has a unique texture that resembles a mystical stone or artifact.
-"""
-
-
 
 # --- Camera Setup ---
 class Camera:
@@ -149,7 +139,7 @@ class World:
 
 # --- Player Setup ---
 class Player:
-    def __init__(self, x, y, layer=1, speed=5):
+    def __init__(self, x, y, layer=1, speed=1):
         self.grid_x = x
         self.grid_y = y
         self.layer = layer  # Player's current layer
@@ -203,10 +193,17 @@ class Player:
 
         screen.blit(PLAYER_TEXTURE, (draw_x, draw_y))
 
+        # For debugging: Draw the frame boundaries
+        pygame.draw.rect(screen, (255, 0, 0), (
+            camera.margin_left, camera.margin_top,
+            SCREEN_WIDTH - camera.margin_left - camera.margin_right,
+            SCREEN_HEIGHT - camera.margin_top - camera.margin_bottom
+        ), 2)
+
 # --- Game Setup ---
 world = World()
 player_start_x, player_start_y, player_layer = world.player_start_pos
-player = Player(player_start_x, player_start_y, layer=player_layer, speed=100)  # Starting position and speed
+player = Player(player_start_x, player_start_y, layer=player_layer, speed=10)  # Starting position and speed
 camera = Camera(SCREEN_WIDTH, SCREEN_HEIGHT)  # Initialize the camera
 
 # --- Game Loop ---
@@ -258,6 +255,6 @@ while running:
 
     pygame.display.flip()
     # clock.tick(60)  # Already handled above
-
+    #
 pygame.quit()
 sys.exit()
