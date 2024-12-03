@@ -1,0 +1,25 @@
+{
+    "Stone": {
+        "name": "Stone",
+        "image": "assets/img/items/stone.png",
+        "type": "material"
+    },
+    "Stick": {
+        "name": "Stick",
+        "image": "assets/img/items/stick.png",
+        "type": "material"
+    },
+    "Sword": {
+        "name": "Sword",
+        "image": "assets/img/items/sword.png",
+        "type": "weapon",
+        "damage": 25
+    },
+    "Pickaxe": {
+        "name": "Pickaxe",
+        "image": "assets/img/items/pickaxe.png",
+        "type": "tool",
+        "mining_speed": 1.5
+    }
+   
+}

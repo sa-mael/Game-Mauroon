@@ -112,6 +112,8 @@ def main():
                 if event.key == pygame.K_c:  # Press 'C' to craft
                     # Example: Craft a Sword
                     crafting.craft("Sword", inventory)
+                elif event.key == pygame.K_i:  # Press 'I' to toggle inventory
+                    inventory.toggle_visibility()
 
         # Handle player movement
         keys = pygame.key.get_pressed()
@@ -145,6 +147,10 @@ def main():
         # Update enemies
         for enemy in enemies:
             enemy.move_towards_player(player, dt)
+            # Simple collision detection between player and enemy
+            if int(enemy.grid_x) == int(player.grid_x) and int(enemy.grid_y) == int(player.grid_y):
+                health_bar.update(damage=10)
+                print("Player hit by enemy!")
 
         # Render everything
         screen.fill(BACKGROUND_COLOR)

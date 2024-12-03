@@ -1,0 +1,19 @@
+{
+    "Zombie": {
+        "name": "Zombie",
+        "image": "assets/img/enemies/zombie.png",
+        "type": "melee",
+        "health": 50,
+        "damage": 10,
+        "speed": 60
+    },
+    "Skeleton": {
+        "name": "Skeleton",
+        "image": "assets/img/enemies/skeleton.png",
+        "type": "ranged",
+        "health": 30,
+        "damage": 15,
+        "speed": 50
+    }
+  
+}

@@ -1,0 +1,23 @@
+{
+    "Sword": {
+        "ingredients": [
+            { "name": "Stone", "quantity": 2 },
+            { "name": "Stick", "quantity": 1 }
+        ],
+        "result": {
+            "name": "Sword",
+            "image": "assets/img/items/sword.png"
+        }
+    },
+    "Pickaxe": {
+        "ingredients": [
+            { "name": "Stone", "quantity": 3 },
+            { "name": "Stick", "quantity": 2 }
+        ],
+        "result": {
+            "name": "Pickaxe",
+            "image": "assets/img/items/pickaxe.png"
+        }
+    }
+    
+}

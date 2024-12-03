@@ -1,6 +1,6 @@
 # modules/ui.py
 
-import pygame
+import pygame , sys 
 from config import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class HealthBar:
