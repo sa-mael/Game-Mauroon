@@ -43,7 +43,7 @@ class AnimatedSprite:
 
         self.frames = []
         self.current_frame = 0
-        self.elapsed_time = 1  # Time since last frame change
+        self.elapsed_time = 0  # Time since last frame change
 
         # Extract frames from the sprite sheet
         for i in range(self.num_frames):
@@ -274,6 +274,8 @@ def load_texture(path, width, height, scale_size):
 
 # --- Main Game Setup ---
 def main():
+    global SCALE_SIZE  # Объявление глобальной переменной
+
     # --- Load Static Textures ---
     TEXTURES = {
         "1": load_texture("img/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),    # Block type 1
@@ -285,8 +287,7 @@ def main():
     }
 
     # --- Load Animated Sprite for Block 6 ---
-    # Ensure that 'img/ARW2DSprite.png' exists and has the correct dimensions
-    # Например, если у вас 5 кадров по горизонтали, каждый размером 64x64 пикселя
+    # Убедитесь, что 'img/ARW2DSprite.png' существует и имеет 5 кадров по горизонтали, каждый 64x64 пикселя
     TEXTURES["6"] = AnimatedSprite("img/ARW2DSprite.png", 64, 64, SCALE_SIZE, num_frames=5, frame_delay=0.1)
 
     # --- Create World ---
@@ -310,7 +311,6 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if pygame.key.get_pressed()[pygame.K_LCTRL]:
                     if event.button == 4:  # Scroll up (zoom in)
-                        global SCALE_SIZE
                         SCALE_SIZE += ZOOM_SPEED
                         # Update all static textures
                         for key in TEXTURES:
@@ -320,7 +320,6 @@ def main():
                                 except:
                                     pass  # Если файл не найден или другая ошибка, пропустим
                     elif event.button == 5:  # Scroll down (zoom out)
-                        global SCALE_SIZE
                         SCALE_SIZE = max(0.1, SCALE_SIZE - ZOOM_SPEED)  # Prevent SCALE_SIZE from going negative
                         # Update all static textures
                         for key in TEXTURES:
