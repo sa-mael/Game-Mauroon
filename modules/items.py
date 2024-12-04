@@ -20,7 +20,9 @@ class Item:
             self.image = pygame.transform.scale(self.image, (40, 40))  # Scale icon size
         except pygame.error as e:
             print(f"Error loading item image '{image_path}': {e}")
-            sys.exit()
+            # Create a placeholder surface if image loading fails
+            self.image = pygame.Surface((40, 40))
+            self.image.fill((255, 0, 0))  # Red color for visibility
 
     def __repr__(self):
         return f"Item(name={self.name}, quantity={self.quantity})"
