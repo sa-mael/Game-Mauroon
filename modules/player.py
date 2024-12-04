@@ -3,6 +3,8 @@
 import pygame
 import sys
 from config import BLOCK_SIZE, SCALE_SIZE, PLAYER_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from .world import World  # If needed
+
 
 class Player:
     def __init__(self, x, y, layer=1, speed=5, texture_path="assets/img/blocks/player.png"):
