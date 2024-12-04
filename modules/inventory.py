@@ -1,93 +1,123 @@
-# modules/world.py
+# modules/inventory.py
 
 import pygame
 import sys
-from config import BLOCK_SIZE, SCALE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
-from .animated_sprite import AnimatedSprite  # Changed to relative import
+from config import SCREEN_WIDTH, SCREEN_HEIGHT
+from .items import Item  # Use relative import
 
-class World:
-    def __init__(self, map_file):
-        self.layers = 3  # Number of layers
-        self.map_data = self.load_map_from_file(map_file)
-        self.player_start_pos = self.find_player_start_position()
-
-    def load_map_from_file(self, file_path):
+class Inventory:
+    def __init__(self, width=5, height=4):
         """
-        Loads the map from a text file, separating it into layers.
+        Initializes the player's inventory.
 
-        :param file_path: Path to the map file.
-        :return: List of map layers.
+        :param width: Number of slots horizontally.
+        :param height: Number of slots vertically.
         """
+        self.width = width
+        self.height = height
+        self.slots = [[None for _ in range(width)] for _ in range(height)]
+        self.selected_slot = (0, 0)  # Currently selected slot
+        self.visible = False  # Inventory visibility
+
+        # Load inventory slot graphics
         try:
-            with open(file_path, "r") as f:
-                lines = f.readlines()
+            self.slot_image = pygame.image.load("assets/img/ui/inventory_slot.png").convert_alpha()
+            self.slot_image = pygame.transform.scale(self.slot_image, (50, 50))
+        except pygame.error as e:
+            print(f"Error loading inventory slot image: {e}")
+            # Create a simple placeholder surface if image is missing
+            self.slot_image = pygame.Surface((50, 50))
+            self.slot_image.fill((100, 100, 100))  # Grey color
 
-            chunks = []
-            current_layer = -1
+    def toggle_visibility(self):
+        """Toggle the visibility of the inventory."""
+        self.visible = not self.visible
 
-            for line in lines:
-                line = line.strip()
-                if line.startswith("# Layer"):
-                    current_layer += 1
-                    chunks.append([])
-                    continue
-                if line and current_layer >= 0:
-                    chunks[current_layer].append([int(char) for char in line])
-            return chunks
-
-        except FileNotFoundError:
-            print(f"Map file '{file_path}' not found!")
-            sys.exit()
-        except Exception as e:
-            print(f"Error loading map: {e}")
-            sys.exit()
-
-    def find_player_start_position(self):
+    def add_item(self, item):
         """
-        Finds the position of block '5' on the second layer to set the player's starting position.
+        Adds an item to the first available inventory slot.
 
-        :return: Tuple (x, y, layer_index).
+        :param item: Item object to add.
+        :return: True if added successfully, False if inventory is full.
         """
-        layer_index = 1  # Second layer (index 1)
-        for y, row in enumerate(self.map_data[layer_index]):
-            for x, block in enumerate(row):
-                if block == 5:
-                    return (x, y, layer_index)
-        # If block '5' not found, set default position
-        print("Block '5' not found on the second layer. Setting default position.")
-        return (0, 0, layer_index)
+        for y in range(self.height):
+            for x in range(self.width):
+                existing_item = self.slots[y][x]
+                if existing_item and existing_item.name == item.name:
+                    existing_item.quantity += item.quantity
+                    return True
+                elif self.slots[y][x] is None:
+                    self.slots[y][x] = item
+                    return True
+        return False  # Inventory is full
 
-    def render(self, surface, textures, camera):
+    def remove_item(self, item_name, quantity):
         """
-        Renders the map with camera offset.
+        Removes a specific quantity of an item from the inventory.
+
+        :param item_name: The name of the item to remove.
+        :param quantity: The quantity to remove.
+        :return: True if removal was successful, False otherwise.
+        """
+        for y in range(self.height):
+            for x in range(self.width):
+                item = self.slots[y][x]
+                if item and item.name == item_name:
+                    if item.quantity > quantity:
+                        item.quantity -= quantity
+                        return True
+                    elif item.quantity == quantity:
+                        self.slots[y][x] = None
+                        return True
+                    else:
+                        print(f"Not enough '{item_name}' to remove.")
+                        return False
+        print(f"Item '{item_name}' not found in inventory.")
+        return False
+
+    def has_item(self, item_name, quantity):
+        """
+        Checks if the inventory has at least a certain quantity of an item.
+
+        :param item_name: The name of the item to check.
+        :param quantity: The required quantity.
+        :return: True if the inventory has enough, False otherwise.
+        """
+        total = 0
+        for row in self.slots:
+            for item in row:
+                if item and item.name == item_name:
+                    total += item.quantity
+                    if total >= quantity:
+                        return True
+        return False
+
+    def draw(self, surface):
+        """
+        Draws the inventory on the screen if it's visible.
 
         :param surface: Pygame surface to draw on.
-        :param textures: Dictionary of block textures.
-        :param camera: Camera object for offset.
         """
-        for layer_index, layer in enumerate(self.map_data):
-            for y, row in enumerate(layer):
-                for x, block in enumerate(row):
-                    if block > 0:
-                        if block == 6 and isinstance(textures["6"], AnimatedSprite):
-                            # Animated block
-                            iso_x = (x - y) * BLOCK_SIZE * SCALE_SIZE // 2
-                            iso_y = (x + y) * BLOCK_SIZE * SCALE_SIZE // 4 - layer_index * BLOCK_SIZE * SCALE_SIZE // 2
+        if not self.visible:
+            return
 
-                            # Camera offset
-                            draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x
-                            draw_y = iso_y + SCREEN_HEIGHT // 3.5 + camera.offset_y
+        inventory_width = self.width * 60 + 50
+        inventory_height = self.height * 60 + 50
+        inventory_surface = pygame.Surface((inventory_width, inventory_height), pygame.SRCALPHA)
+        inventory_surface.fill((0, 0, 0, 150))  # Semi-transparent background
 
-                            textures["6"].draw(surface, draw_x, draw_y)
-                        else:
-                            # Static block
-                            texture = textures.get(str(block), None)
-                            if texture:
-                                iso_x = (x - y) * BLOCK_SIZE * SCALE_SIZE // 2
-                                iso_y = (x + y) * BLOCK_SIZE * SCALE_SIZE // 4 - layer_index * BLOCK_SIZE * SCALE_SIZE // 2
+        for y in range(self.height):
+            for x in range(self.width):
+                draw_x = 25 + x * 60
+                draw_y = 25 + y * 60
+                inventory_surface.blit(self.slot_image, (draw_x, draw_y))
+                if self.slots[y][x]:
+                    # Draw the item in the slot
+                    inventory_surface.blit(self.slots[y][x].image, (draw_x + 5, draw_y + 5))
+                    # Draw quantity
+                    font = pygame.font.SysFont(None, 24)
+                    quantity_text = font.render(str(self.slots[y][x].quantity), True, (255, 255, 255))
+                    inventory_surface.blit(quantity_text, (draw_x + 35, draw_y + 35))
 
-                                # Camera offset
-                                draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x
-                                draw_y = iso_y + SCREEN_HEIGHT // 3.5 + camera.offset_y
-
-                                surface.blit(texture, (draw_x, draw_y))
+        # Blit the inventory surface to the main screen
+        surface.blit(inventory_surface, (SCREEN_WIDTH // 2 - inventory_width // 2, SCREEN_HEIGHT // 2 - inventory_height // 2))
