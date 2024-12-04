@@ -7,7 +7,7 @@ FPS = 60
 
 # Blocks
 BLOCK_SIZE = 22
-SCALE_SIZE = 2  # Initial scale
+scaler = 2  # Initial scale
 
 # Player settings
 PLAYER_SIZE = 40  # Size of the player sprite in pixels

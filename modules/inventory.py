@@ -3,7 +3,8 @@
 import pygame
 import sys
 from config import SCREEN_WIDTH, SCREEN_HEIGHT
-from .items import Item  # Use relative import
+from modules.items import Item
+
 
 class Inventory:
     def __init__(self, width=5, height=4):

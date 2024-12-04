@@ -1,7 +1,7 @@
 # modules/crafting.py
 
 import json
-from modules.items import Item
+from items import Item
 
 class Crafting:
     def __init__(self, recipes_file="data/recipes.json"):

@@ -3,7 +3,6 @@
 import pygame
 import sys
 
-
 class Item:
     def __init__(self, name, image_path, quantity=1):
         """

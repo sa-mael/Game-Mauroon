@@ -3,7 +3,10 @@
 
 import pygame
 import sys
+<<<<<<<<<<<<<<  ✨ Codeium Command 🌟 >>>>>>>>>>>>>>>>
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, BLOCK_SIZE, scaler, ZOOM_SPEED, BACKGROUND_COLOR, FPS
 from config import SCREEN_WIDTH, SCREEN_HEIGHT, BLOCK_SIZE, SCALE_SIZE, ZOOM_SPEED, BACKGROUND_COLOR, FPS
+<<<<<<<  4116af36-56cb-4aca-978c-caa93e439407  >>>>>>>
 from modules.animated_sprite import AnimatedSprite
 from modules.camera import Camera
 from modules.world import World
