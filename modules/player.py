@@ -3,23 +3,31 @@
 import pygame
 import sys
 from config import BLOCK_SIZE, SCALE_SIZE, PLAYER_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
-from .world import World  # If needed
+from modules.resource_loader import load_image
+from modules.weapon import Weapon
+from modules.logger import setup_logger
 
+logger = setup_logger()
 
 class Player:
-    def __init__(self, x, y, layer=1, speed=5, texture_path="assets/img/blocks/player.png"):
+    def __init__(self, x, y, layer=1, speed=5, texture_path="assets/img/player.png"):
         self.grid_x = x
         self.grid_y = y
         self.layer = layer  # Player's current layer
         self.speed = speed  # Movement speed
 
-        # Load player texture
-        try:
-            self.texture = pygame.image.load(texture_path).convert_alpha()
-            self.texture = pygame.transform.scale(self.texture, (PLAYER_SIZE, PLAYER_SIZE))
-        except pygame.error as e:
-            print(f"Error loading player texture '{texture_path}': {e}")
-            sys.exit()
+        # Load player texture with error handling
+        self.texture = load_image(texture_path, scale=(PLAYER_SIZE, PLAYER_SIZE))
+
+        if self.texture_error:
+            self.display_error = True
+        else:
+            self.display_error = False
+
+        # Initialize weapons (for simplicity, one weapon)
+        self.current_weapon = Weapon(name="Basic Sword", image_path="assets/img/items/sword.png", strength=20)
+
+    # [Other methods remain unchanged]
 
     def move(self, dx, dy, dt, world):
         """
@@ -38,14 +46,17 @@ class Player:
         int_new_y = int(new_y)
 
         # Check map boundaries and if there's a block on the current layer
-        if (
-            0 <= int_new_x < len(world.map_data[self.layer][0]) and
-            0 <= int_new_y < len(world.map_data[self.layer]) and
-            world.map_data[self.layer][int_new_y][int_new_x] > 0
-        ):
-            self.grid_x, self.grid_y = new_x, new_y
-        else:
-            print("Cannot move to that position.")
+        try:
+            if (
+                0 <= int_new_x < len(world.map_data[self.layer][0]) and
+                0 <= int_new_y < len(world.map_data[self.layer]) and
+                world.map_data[self.layer][int_new_y][int_new_x] > 0
+            ):
+                self.grid_x, self.grid_y = new_x, new_y
+            else:
+                logger.warning("Cannot move to that position.")
+        except IndexError as e:
+            logger.error(f"Movement Error: {e}")
 
     def jump(self, direction, world):
         """
@@ -57,55 +68,32 @@ class Player:
         int_x = int(self.grid_x)
         int_y = int(self.grid_y)
 
-        if direction == "up" and self.layer > 0:
-            # Attempt to jump up
-            if world.map_data[self.layer - 1][int_y][int_x] > 0:
-                self.layer -= 1
+        try:
+            if direction == "up" and self.layer > 0:
+                # Attempt to jump up
+                if world.map_data[self.layer - 1][int_y][int_x] > 0:
+                    self.layer -= 1
+                else:
+                    logger.warning("Cannot jump up; no block above.")
+            elif direction == "down" and self.layer < world.layers - 1:
+                # Attempt to jump down
+                if world.map_data[self.layer + 1][int_y][int_x] > 0:
+                    self.layer += 1
+                else:
+                    logger.warning("Cannot jump down; no block below.")
             else:
-                print("Cannot jump up; no block above.")
-        elif direction == "down" and self.layer < world.layers - 1:
-            # Attempt to jump down
-            if world.map_data[self.layer + 1][int_y][int_x] > 0:
-                self.layer += 1
-            else:
-                print("Cannot jump down; no block below.")
-        else:
-            print("Cannot perform jump.")
-
-    def mine_block(self, world, inventory, crafting):
+                logger.warning("Cannot perform jump.")
+        except IndexError as e:
+            logger.error(f"Jumping Error: {e}")
+    
+    def attack(self, direction, world):
         """
-        Attempts to mine the block the player is facing using the appropriate tool.
+        Executes an attack in a given direction using the current weapon.
 
-        :param world: World object to interact with the map.
-        :param inventory: Player's Inventory object.
-        :param crafting: Crafting system for adding mined items.
+        :param direction: Direction of the attack ('left', 'right', 'up', 'down').
+        :param world: World object to interact with blocks.
         """
-        # Determine the block the player is facing (e.g., in front)
-        target_x = int(self.grid_x + 1)  # Example: block to the right
-        target_y = int(self.grid_y)
-
-        # Check if the target block is within map boundaries
-        if (
-            0 <= target_x < len(world.map_data[self.layer][0]) and
-            0 <= target_y < len(world.map_data[self.layer]) and
-            world.map_data[self.layer][target_y][target_x] > 0
-        ):
-            block_id = world.map_data[self.layer][target_y][target_x]
-            block = world.get_block(block_id)
-
-            # Check if the player has the required tool
-            if block.mining_level <= inventory.get_tool_level():
-                # Remove the block from the world
-                world.map_data[self.layer][target_y][target_x] = 0
-
-                # Add the block as an item to the inventory
-                mined_item = Item(name=block.name, image_path=block.image_path, quantity=1)
-                inventory.add_item(mined_item)
-                print(f"Mined '{block.name}'.")
-            else:
-                print(f"Need a better tool to mine '{block.name}'.")
-        else:
-            print("No block to mine in that direction.")
+        self.current_weapon.attack(direction, self, world)
 
     def draw(self, surface, camera):
         """
@@ -121,4 +109,14 @@ class Player:
         draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x - PLAYER_SIZE // 2
         draw_y = iso_y + SCREEN_HEIGHT // 3.5 + camera.offset_y - PLAYER_SIZE // 2
 
-        surface.blit(self.texture, (draw_x, draw_y))
+        try:
+            surface.blit(self.texture, (draw_x, draw_y))
+        except Exception as e:
+            logger.error(f"Drawing Player Error: {e}")
+        
+         surface.blit(self.texture, (draw_x, draw_y))
+
+        if self.display_error and self.texture_error:
+            # Render the error message on the screen
+            error_text = font.render(self.texture_error, True, (255, 0, 0))
+            surface.blit(error_text, (10, SCREEN_HEIGHT - 30))

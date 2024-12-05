@@ -3,8 +3,11 @@
 import pygame
 import sys
 from config import SCREEN_WIDTH, SCREEN_HEIGHT
-from .items import Item  # Use relative import
-# from .ui import UIElement  # Uncomment if you have UI elements
+from modules.items import Item
+from modules.resource_loader import load_image
+from modules.logger import setup_logger
+
+logger = setup_logger()
 
 class Inventory:
     def __init__(self, width=5, height=4):
@@ -20,13 +23,8 @@ class Inventory:
         self.selected_slot = (0, 0)  # Currently selected slot
         self.visible = False  # Inventory visibility
 
-        # Load inventory slot graphics
-        try:
-            self.slot_image = pygame.image.load("assets/img/ui/inventory_slot.png").convert_alpha()
-            self.slot_image = pygame.transform.scale(self.slot_image, (50, 50))
-        except pygame.error as e:
-            print(f"Error loading inventory slot image: {e}")
-            sys.exit()
+        # Load inventory slot graphics with error handling
+        self.slot_image = load_image("assets/img/ui/inventory_slot.png", scale=(50, 50), fallback_color=(100, 100, 100))
 
     def toggle_visibility(self):
         """Toggle the visibility of the inventory."""
@@ -48,6 +46,7 @@ class Inventory:
                 elif self.slots[y][x] is None:
                     self.slots[y][x] = item
                     return True
+        logger.warning("Inventory is full. Cannot add the item.")
         return False  # Inventory is full
 
     def remove_item(self, item_name, quantity):
@@ -69,9 +68,9 @@ class Inventory:
                         self.slots[y][x] = None
                         return True
                     else:
-                        print(f"Not enough '{item_name}' to remove.")
+                        logger.warning(f"Not enough '{item_name}' to remove.")
                         return False
-        print(f"Item '{item_name}' not found in inventory.")
+        logger.warning(f"Item '{item_name}' not found in inventory.")
         return False
 
     def has_item(self, item_name, quantity):
@@ -119,4 +118,7 @@ class Inventory:
                     inventory_surface.blit(quantity_text, (draw_x + 35, draw_y + 35))
 
         # Blit the inventory surface to the main screen
-        surface.blit(inventory_surface, (SCREEN_WIDTH // 2 - inventory_width // 2, SCREEN_HEIGHT // 2 - inventory_height // 2))
+        surface.blit(
+            inventory_surface,
+            (SCREEN_WIDTH // 2 - inventory_width // 2, SCREEN_HEIGHT // 2 - inventory_height // 2)
+        )
