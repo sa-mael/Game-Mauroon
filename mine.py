@@ -1,5 +1,4 @@
 # mine.py
-#rostty
 
 import pygame
 import sys
@@ -108,7 +107,7 @@ def main():
                                     (int(22 * SCALE_SIZE), int(22 * SCALE_SIZE))
                                 )
 
-            # Handle crafting when 'C' is pressed
+            # Handle crafting and inventory toggling
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:  # Press 'C' to craft
                     # Example: Craft a Sword
