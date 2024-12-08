@@ -34,7 +34,7 @@ def main():
 
     # Load animated sprite for block "6"
     # Assuming ARW2DSprite.png is 5 frames of 64x64 each
-    TEXTURES["6"] = AnimatedSprite("assets/img/blocks/ARW2DSprite.png", 168, 24, num_frames=1, frame_delay=1.1)
+    TEXTURES["6"] = AnimatedSprite("assets/img/blocks/ARW2DSprite.png", 168, 24, num_frames=1, frame_delay=0.1)
 
     # Create world and player
     world = World("assets/maps/map.txt")
