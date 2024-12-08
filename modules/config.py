@@ -3,8 +3,8 @@ import pygame
 # Screen and scaling
 SCREEN_WIDTH = 1360
 SCREEN_HEIGHT = 940
-BLOCK_SIZE = 22
-PLAYER_SIZE = 22
+BLOCK_SIZE = 32
+PLAYER_SIZE = 32
 
 # Colors
 BACKGROUND_COLOR = (50, 50, 50)

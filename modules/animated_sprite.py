@@ -32,7 +32,7 @@ class AnimatedSprite:
     def update(self, dt):
         self.elapsed_time += dt
         if self.elapsed_time >= self.frame_delay:
-            self.elapsed_time = 0
+            self.elapsed_time = 1
             self.current_frame = (self.current_frame + 1) % self.num_frames
 
     def draw(self, surface, x, y):

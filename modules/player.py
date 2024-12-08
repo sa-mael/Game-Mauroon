@@ -3,7 +3,7 @@ import pygame
 from .config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_SIZE
 
 class Player:
-    def __init__(self, x, y, layer=1, speed=100, texture_path="assets/img/blocks/player.png"):
+    def __init__(self, x, y, layer=1, speed=10, texture_path="assets/img/blocks/player.png"):
         self.grid_x = x
         self.grid_y = y
         self.layer = layer

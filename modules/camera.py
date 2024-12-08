@@ -5,8 +5,8 @@ class Camera:
         self.offset_x = 0
         self.offset_y = 0
 
-        self.frame_width = SCREEN_WIDTH // 2
-        self.frame_height = SCREEN_HEIGHT // 2
+        self.frame_width = SCREEN_WIDTH //2
+        self.frame_height = SCREEN_HEIGHT //2
 
         self.margin_left = self.frame_width // 2
         self.margin_right = self.frame_width // 2
