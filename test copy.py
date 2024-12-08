@@ -276,11 +276,11 @@ def load_texture(path, width, height, scale_size):
 def main():
     # --- Load Static Textures ---
     TEXTURES = {
-        "1": load_texture("img/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),    # Block type 1
-        "2": load_texture("img/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),    # Block type 2
-        "3": load_texture("img/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),     # Block type 3
-        "4": load_texture("img/grass1.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Block type 4
-        "5": load_texture("img/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 5
+        "1": load_texture("img/asset/blocks/stone.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),    # Block type 1
+        "2": load_texture("img/asset/blocks/grass.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),    # Block type 2
+        "3": load_texture("img/asset/blocks/tree.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),     # Block type 3
+        "4": load_texture("img/asset/blocks/grass1.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),   # Block type 4
+        "5": load_texture("img/asset/blocks/block_5.png", BLOCK_SIZE, BLOCK_SIZE, SCALE_SIZE),  # Block type 5
         "empty": None,
     }
 
