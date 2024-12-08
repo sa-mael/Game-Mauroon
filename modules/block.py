@@ -1,10 +1,5 @@
-# block.py
-import pygame , sys
-
+# Minimal placeholder for block-related logic if needed
+# Currently unused, but can be expanded.
 class Block:
-    def __init__(self, block_id, image_path):
-        self.id = block_id
-        self.image = pygame.image.load(image_path)
-
-    def get_image(self):
-        return self.image
+    def __init__(self, block_type):
+        self.block_type = block_type

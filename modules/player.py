@@ -1,28 +1,59 @@
-# player.py
-
+import sys
 import pygame
+from .config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_SIZE
 
 class Player:
-    def __init__(self, x, y, layer):
-        self.x = x
-        self.y = y
+    def __init__(self, x, y, layer=1, speed=100, texture_path="assets/img/blocks/player.png"):
+        self.grid_x = x
+        self.grid_y = y
         self.layer = layer
-        self.speed = 250
+        self.speed = speed
 
-    def move(self, keys, dt, world):
-        # Handle movement using arrow keys or WASD
-        if keys[pygame.K_a]:  # Move left
-            self.x -= self.speed * dt
-        if keys[pygame.K_d]:  # Move right
-            self.x += self.speed * dt
-        if keys[pygame.K_w]:  # Move up
-            self.y -= self.speed * dt
-        if keys[pygame.K_s]:  # Move down
-            self.y += self.speed * dt
+        # Load player texture
+        try:
+            self.texture = pygame.image.load(texture_path).convert_alpha()
+            self.texture = pygame.transform.scale(self.texture, (PLAYER_SIZE, PLAYER_SIZE))
+        except pygame.error as e:
+            print(f"Error loading player texture '{texture_path}': {e}")
+            sys.exit()
 
-    def update_animation(self):
-        pass
+    def move(self, dx, dy, dt, world):
+        new_x = self.grid_x + dx * self.speed * dt
+        new_y = self.grid_y + dy * self.speed * dt
 
-    def draw(self, surface, textures):
-        # Draw the player at the correct position
-        surface.blit(textures["player"], (self.x, self.y))
+        int_new_x = int(new_x)
+        int_new_y = int(new_y)
+
+        if (0 <= int_new_x < len(world.map_data[self.layer][0]) and
+            0 <= int_new_y < len(world.map_data[self.layer]) and
+            world.map_data[self.layer][int_new_y][int_new_x] > 0):
+            self.grid_x, self.grid_y = new_x, new_y
+        else:
+            # Position blocked
+            pass
+
+    def jump(self, direction, world):
+        int_x = int(self.grid_x)
+        int_y = int(self.grid_y)
+
+        if direction == "up" and self.layer > 0:
+            if world.map_data[self.layer - 1][int_y][int_x] > 0:
+                self.layer -= 1
+            else:
+                # No block above
+                pass
+        elif direction == "down" and self.layer < world.layers - 1:
+            if world.map_data[self.layer + 1][int_y][int_x] > 0:
+                self.layer += 1
+            else:
+                # No block below
+                pass
+
+    def draw(self, surface, camera):
+        iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE // 2
+        iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE // 4 - self.layer * BLOCK_SIZE // 2
+
+        draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x - PLAYER_SIZE // 2
+        draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y - PLAYER_SIZE // 2
+
+        surface.blit(self.texture, (draw_x, draw_y))
