@@ -1,7 +1,7 @@
 # modules/ui.py
 
 import pygame , sys 
-from config import SCREEN_WIDTH, SCREEN_HEIGHT
+from modules.config import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class HealthBar:
     def __init__(self, max_health=100, current_health=100):
