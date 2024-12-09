@@ -10,7 +10,7 @@ PLAYER_SIZE = 32
 BACKGROUND_COLOR = (50, 50, 50)
 
 # Framerate
-FPS = 10
+FPS = 100
 
 # Set up pygame font if needed
 pygame.font.init()
