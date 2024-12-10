@@ -7,6 +7,10 @@ FPS = 60
 
 # Blocks
 BLOCK_SIZE = 22
+
+
+
+
 scaler = 2  # Initial scale
 
 # Player settings
