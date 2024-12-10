@@ -29,7 +29,7 @@ class Player:
             world.map_data[self.layer][int_new_y][int_new_x] > 0):
             self.grid_x, self.grid_y = new_x, new_y
         else:
-            # Position blocked
+            # Position blockedx
             pass
 
     def jump(self, direction, world):
