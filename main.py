@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from modules.config import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR, FPS, BLOCK_SIZE
+from modules.config import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR, FPS, BLOCK_SIZE 
 from modules.camera import Camera
 from modules.world import World
 from modules.player import Player
@@ -31,11 +31,14 @@ def main():
         "5": load_texture("assets/img/blocks/block_5.png", BLOCK_SIZE, BLOCK_SIZE),
         "empty": None,
     }
+    
+    
 
     # Load animated sprite for block "6"
     # Assuming ARW2DSprite.png is 5 frames of 64x64 each
-    TEXTURES["6"] = AnimatedSprite("assets/img/blocks/ARW2DSprite2.png", 24, 24, num_frames=14, frame_delay=0.3)
-
+    TEXTURES["6"] = AnimatedSprite("assets/img/blocks/ARW2DSprite2.png", 24, 24, num_frames=14, frame_delay=1.05)
+    
+    TEXTURES["7"] = AnimatedSprite("assets/img/enemies/enemiSP.png", 68, 68, num_frames=3, frame_delay=1.19)
     # Create world and player
     world = World("assets/maps/map.txt")
     player_start_x, player_start_y, player_layer = world.player_start_pos
@@ -75,8 +78,11 @@ def main():
         camera.update(player_iso_x, player_iso_y)
 
         # Update animated sprites
-        if "6" in TEXTURES and isinstance(TEXTURES["6"], AnimatedSprite):
-            TEXTURES["6"].update(dt)
+        if "6" in TEXTURES and isinstance(TEXTURES["6"] , AnimatedSprite):
+            TEXTURES["6"] .update(dt)
+            
+        if "6" in TEXTURES and isinstance(TEXTURES["7"] , AnimatedSprite):
+            TEXTURES["7"] .update(dt)
 
         # Render
         screen.fill(BACKGROUND_COLOR)
