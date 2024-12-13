@@ -57,3 +57,23 @@ class Player:
         draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y - PLAYER_SIZE // 2
 
         surface.blit(self.texture, (draw_x, draw_y))
+    
+    def adjust_player_layer(self, enemies):
+        """Adjust the player's layer based on the position relative to enemies."""
+        for enemy in enemies:
+            if self.rect.y > enemy.rect.y:
+                self.layer = 1  # Player is behind the enemy
+            else:
+                self.layer = 0  # Player is in front of the enemy
+
+
+    def collides_with_blocks(self, new_x, new_y, world):
+        """Check for collision with blocks in the world map."""
+        # Convert new coordinates to grid coordinates (assuming tile map is used)
+        grid_x = new_x // BLOCK_SIZE
+        grid_y = new_y // BLOCK_SIZE
+        
+        # Check if the new position would collide with a non-empty block
+        if world.map_data[grid_y][grid_x] != 0:  # Assuming 0 means no block
+            return True
+        return False
