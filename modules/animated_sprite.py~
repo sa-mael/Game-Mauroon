@@ -37,14 +37,3 @@ class AnimatedSprite:
 
     def draw(self, surface, x, y):
         surface.blit(self.frames[self.current_frame], (x, y))
-
-    def __init__(self, image_path):
-        self.sprite_sheet = image_path
-
-    def get_frame(self, num_frames, frame_width, frame_height, scale_x, background_color):
-        image = pygame.Surface((frame_width, frame_height)).convert_alpha()
-        image.blit(self.sprite_sheet, (0, 0), (num_frames * frame_width, 0, frame_width, frame_height))
-        image = pygame.transform.scale(image, (frame_width * scale_x, frame_height * scale_x))
-        image.set_colorkey(background_color)
-
-        return image

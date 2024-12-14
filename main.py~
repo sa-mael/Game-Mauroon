@@ -9,7 +9,7 @@ from modules.animated_sprite import AnimatedSprite
 
 master_animation_list = []
 animation_lengths_list = [5,5,5,5,5,5,5,5]
-direction = 2
+direction = 0
 last_update_tick = py.time.get_ticks()
 animation_speed = 150
 current_frame = []
@@ -67,16 +67,16 @@ def main():
         dx, dy = 0, 0
         if keys[pygame.K_a]: # left
             dx = -1
-            direction = 4
+            action = 4
         if keys[pygame.K_d]: # right
             dx = 1
-            direction = 0
+            action = 0
         if keys[pygame.K_w]: # up
             dy = -1
-            direction = 6
+            action = 6
         if keys[pygame.K_s]: # down
             dy = 1
-            direction = 2
+            action = 2
         if dx != 0 and dx != 0: # if diagonal movement adjust the speed to 0.5
             dx *= .7071
             dy *= .7071
