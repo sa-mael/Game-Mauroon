@@ -3,7 +3,7 @@ from .config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class World:
     def __init__(self, map_file):
-        self.layers = 3
+        self.layers = 5
         self.map_data = self.load_map_from_file(map_file)
         self.player_start_pos = self.find_player_start_position()
 

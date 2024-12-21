@@ -74,6 +74,6 @@ class Player:
         grid_y = new_y // BLOCK_SIZE
         
         # Check if the new position would collide with a non-empty block
-        if world.map_data[grid_y][grid_x] != 0:  # Assuming 0 means no block
+        if world.map_data[grid_y][grid_x] == 0:  # Assuming 0 means no block
             return True
         return False
