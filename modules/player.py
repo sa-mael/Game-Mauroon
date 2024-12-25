@@ -1,9 +1,10 @@
 import sys
 import pygame
-from .config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, PLAYER_SIZE
+
+from ..config import SCREEN_WIDTH, SCREEN_HEIGHT, BLOCK_SIZE , PLAYER_SIZE 
 
 class Player:
-    def __init__(self, x, y, layer=1, speed=10, texture_path="assets/img/blocks/player.png"):
+    def __init__(self, x, y, layer=1, speed=100, texture_path="assets/img/blocks/player.png"):
         self.grid_x = x
         self.grid_y = y
         self.layer = layer
@@ -18,21 +19,40 @@ class Player:
             sys.exit()
 
     def move(self, dx, dy, dt, world):
+        # Calculate the new position based on movement input
         new_x = self.grid_x + dx * self.speed * dt
         new_y = self.grid_y + dy * self.speed * dt
 
         int_new_x = int(new_x)
         int_new_y = int(new_y)
 
-        if (0 <= int_new_x < len(world.map_data[self.layer][0]) and
-            0 <= int_new_y < len(world.map_data[self.layer]) and
-            world.map_data[self.layer][int_new_y][int_new_x] > 0):
-            self.grid_x, self.grid_y = new_x, new_y
+        # Get the topmost layer and block at the target position
+        top_layer, block_id = world.get_top_layer_at(int_new_x, int_new_y)
+
+        if top_layer is not None:
+            # There is a block at this position
+            if world.is_block_walkable(block_id):
+                # Player can stand on this block
+                self.grid_x = new_x
+                self.grid_y = new_y
+                self.layer = top_layer
+            else:
+                # Block is not walkable, so player cannot move there
+                # Do not update player position
+                pass
         else:
-            # Position blockedx
-            pass
+            # No block present at this position
+            # If you want the player to still stand on "ground" when there's no block,
+            # consider setting layer to 0 as a default ground layer.
+            # Or, if you don't want the player to move into empty space, do nothing.
+            
+            # Example: assume layer 0 is ground even if block_id=0
+            self.grid_x = new_x
+            self.grid_y = new_y
+            self.layer = 0
 
     def jump(self, direction, world):
+        # Example of layer changing by jumping
         int_x = int(self.grid_x)
         int_y = int(self.grid_y)
 
@@ -43,13 +63,14 @@ class Player:
                 # No block above
                 pass
         elif direction == "down" and self.layer < world.layers - 1:
-            if world.map_data[self.layer + 1][int_y][int_x] > 0:
-                self.layer += 1
-            else:
-                # No block below
-                pass
+            # Check if block below is walkable
+            below_layer = self.layer + 1
+            block_id = world.map_data[below_layer][int_y][int_x]
+            if block_id > 0 and world.is_block_walkable(block_id):
+                self.layer = below_layer
 
     def draw(self, surface, camera):
+        # Calculate isometric position
         iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE // 2
         iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE // 4 - self.layer * BLOCK_SIZE // 2
 
@@ -57,7 +78,7 @@ class Player:
         draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y - PLAYER_SIZE // 2
 
         surface.blit(self.texture, (draw_x, draw_y))
-    
+
     def adjust_player_layer(self, enemies):
         """Adjust the player's layer based on the position relative to enemies."""
         for enemy in enemies:
