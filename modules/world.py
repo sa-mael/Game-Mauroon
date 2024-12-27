@@ -1,9 +1,24 @@
+# modules/world.py
 import sys
-from .config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+import pygame
+from modules.config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from modules.animated_sprite import AnimatedSprite
 
 class World:
     def __init__(self, map_file):
-        self.layers = 5
+        """
+        Loads the map from a file containing multiple layers.
+        For example:
+            # Layer 0
+            1111
+            1001
+            ...
+            # Layer 1
+            ...
+            # Layer 2
+            ...
+        """
+        self.layers = 3  # or however many layers your map.txt has
         self.map_data = self.load_map_from_file(map_file)
         self.player_start_pos = self.find_player_start_position()
 
@@ -22,8 +37,11 @@ class World:
                     chunks.append([])
                     continue
                 if line and current_layer >= 0:
-                    chunks[current_layer].append([int(char) for char in line])
+                    row_data = [int(char) for char in line]
+                    chunks[current_layer].append(row_data)
+
             return chunks
+
         except FileNotFoundError:
             print(f"Map file '{file_path}' not found!")
             sys.exit()
@@ -32,30 +50,39 @@ class World:
             sys.exit()
 
     def find_player_start_position(self):
+        """
+        Look for '5' in layer 1 as the player's start.
+        If not found, default to (0, 0, layer 1).
+        """
         layer_index = 1
-        for y, row in enumerate(self.map_data[layer_index]):
-            for x, block in enumerate(row):
-                if block == 5:
-                    return (x, y, layer_index)
-        print("Block '5' not found on layer 1. Setting default player position.")
+        if layer_index < len(self.map_data):
+            for y, row in enumerate(self.map_data[layer_index]):
+                for x, block in enumerate(row):
+                    if block == 5:
+                        return (x, y, layer_index)
         return (0, 0, layer_index)
 
     def render(self, surface, textures, camera):
+        """
+        Draw each layer in isometric projection.
+        """
         for layer_index, layer in enumerate(self.map_data):
             for y, row in enumerate(layer):
                 for x, block in enumerate(row):
                     if block > 0:
-                        # Isometric conversion
+                        block_key = str(block)
                         iso_x = (x - y) * BLOCK_SIZE // 2
                         iso_y = (x + y) * BLOCK_SIZE // 4 - layer_index * BLOCK_SIZE // 2
 
                         draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x
                         draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y
 
-                        if str(block) in textures and textures[str(block)] is not None:
-                            # Could be animated or static
-                            tex = textures[str(block)]
-                            if hasattr(tex, 'draw'):
-                                tex.draw(surface, draw_x, draw_y)
-                            else:
-                                surface.blit(tex, (draw_x, draw_y))
+                        if block_key in textures and isinstance(textures[block_key], AnimatedSprite):
+                            # Animated block
+                            textures[block_key].draw(surface, draw_x, draw_y)
+                        elif block_key in textures and textures[block_key] is not None:
+                            # Static texture
+                            surface.blit(textures[block_key], (draw_x, draw_y))
+                        else:
+                            # No valid texture (block > 0 but no image loaded)
+                            pass
