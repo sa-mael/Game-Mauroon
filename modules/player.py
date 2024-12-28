@@ -25,17 +25,21 @@ class Player:
             sys.exit()
 
     def move(self, dx, dy, dt, world):
-        """
-        Moves the player if possible. In a basic version,
-        we don't check collisions with solid blocks here,
-        but you can implement them if needed.
-        """
         new_x = self.grid_x + dx * self.speed * dt
         new_y = self.grid_y + dy * self.speed * dt
-
-        # Just move for now (no collision). Convert to int if you prefer tile-based logic.
-        self.grid_x = new_x
-        self.grid_y = new_y
+    
+        # Convert to int for checking collisions on the tile grid
+        int_new_x = int(new_x)
+        int_new_y = int(new_y)
+    
+        from modules.config import SOLID_BLOCKS  # or pass it in some way
+    
+        if world.is_position_walkable(self.layer, int_new_x, int_new_y, SOLID_BLOCKS):
+            self.grid_x = new_x
+            self.grid_y = new_y
+        else:
+            # Collided with a solid block – do not update position
+            pass
 
     def jump(self, direction, world):
         """Jump between layers, if within bounds."""

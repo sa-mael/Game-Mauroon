@@ -18,7 +18,7 @@ class World:
             # Layer 2
             ...
         """
-        self.layers = 3  # or however many layers your map.txt has
+        self.layers = 5  # or however many layers your map.txt has
         self.map_data = self.load_map_from_file(map_file)
         self.player_start_pos = self.find_player_start_position()
 
@@ -86,3 +86,15 @@ class World:
                         else:
                             # No valid texture (block > 0 but no image loaded)
                             pass
+    def is_position_walkable(self, layer, x, y, solid_blocks_set):
+        # Check layer boundaries
+        if layer < 0 or layer >= len(self.map_data):
+            return False
+        # Check row/column boundaries
+        if y < 0 or y >= len(self.map_data[layer]):
+            return False
+        if x < 0 or x >= len(self.map_data[layer][y]):
+            return False
+    
+        block_id = self.map_data[layer][y][x]
+        return block_id not in solid_blocks_set
