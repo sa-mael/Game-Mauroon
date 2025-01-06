@@ -8,10 +8,8 @@ from .block import is_block_walkable
 from .animated_sprite import AnimatedSprite
 
 class World:
-    def __init__(self, map_file, textures):
-        """
-        Initialize the world by loading map data from file and storing textures.
-        """
+    def __init__(self, map_file):
+        self.layers = 3
         self.map_data = self.load_map_from_file(map_file)
         self.layers = len(self.map_data)
         self.player_start_pos = self.find_player_start_position()
