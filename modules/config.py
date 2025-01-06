@@ -10,7 +10,8 @@ PLAYER_SIZE = 32
 BACKGROUND_COLOR = (50, 50, 50)
 
 # Framerate
-FPS = 100
-
+FPS = 160
+SOLID_BLOCKS = {1, 2, 3, 4, 5, 6, 7, 34, 463, 999}  # anything you want
+############    ---------    If the block’s ID is in this set, the player cannot walk there.
 # Set up pygame font if needed
 pygame.font.init()
