@@ -1,5 +1,7 @@
 
-# Game Title of the MAUROON 
+# MAUROON  
+
+# Game Title 
 
 **Short Description:**  
 This is an isometric 2.5D exploration and adventure game where you control a character moving through layered terrain, gathering resources, and interacting with various elements in a lively isometric world.
