@@ -1,10 +1,10 @@
 
-# Game Title
+# Game Title of the MAUROON 
 
 **Short Description:**  
 This is an isometric 2.5D exploration and adventure game where you control a character moving through layered terrain, gathering resources, and interacting with various elements in a lively isometric world.
 
-##  World:
+##  World
 
 In this crimson-hued realm of ruin and redemption, you stand as the last scion of a forgotten royal bloodline. The Empire—once a beacon of power—now teeters on the edge of oblivion, besieged by twisted creatures bearing glowing relics of an ancient, evil god. Across sprawling isometric battlefields, you will discover and master the mysterious segis and arches, unlocking new strengths and long-dormant sorceries. From sun-scorched deserts to crumbling fortress-cities, a world stained in shades of red invites you to defy the cult that seeks to resurrect the shattered deity, even as you grapple with your own destiny. Will you safeguard the Empire’s future or dare to break the cycle of chaos forever? The choice—and the fate of this dying land—lies in your hands.
 
