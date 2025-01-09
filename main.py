@@ -7,6 +7,10 @@ from modules.config import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR, FPS, B
 from modules.camera import Camera
 from modules.world import World
 from modules.player import Player
+
+from ui.menu import Menu
+from game import Game
+
 from modules.animated_sprite import AnimatedSprite
 
 def load_texture(path, width, height):
