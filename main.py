@@ -2,16 +2,15 @@
 import pygame
 import sys
 
-# Import from our modules folder
+# --- Import your isometric modules ---
 from modules.config import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR, FPS, BLOCK_SIZE
 from modules.camera import Camera
 from modules.world import World
 from modules.player import Player
-
-from ui.menu import Menu
-from game import Game
-
 from modules.animated_sprite import AnimatedSprite
+
+# --- Import the UI menu system and optional game wrapper ---
+from ui.menu import Menu
 
 def load_texture(path, width, height):
     """
@@ -28,21 +27,30 @@ def load_texture(path, width, height):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Isometric World with Animation")
+    pygame.display.set_caption("Isometric World with Menu")
     clock = pygame.time.Clock()
 
-    # --- Load static textures ---
+    # -----------------------------------------------------
+    # 1) MENU STATE SETUP
+    # -----------------------------------------------------
+    menu_active = True
+    game_active = False
+    menu = Menu(SCREEN_WIDTH, SCREEN_HEIGHT)
+
+    # -----------------------------------------------------
+    # 2) GAME STATE SETUP
+    # -----------------------------------------------------
+    # Load static textures
     TEXTURES = {
-        "1": load_texture("assets/img/blocks/stone.png", BLOCK_SIZE, BLOCK_SIZE),
-        "2": load_texture("assets/img/blocks/grass.png", BLOCK_SIZE, BLOCK_SIZE),
-        "3": load_texture("assets/img/blocks/tree.png",  BLOCK_SIZE, BLOCK_SIZE),
+        "1": load_texture("assets/img/blocks/stone.png",  BLOCK_SIZE, BLOCK_SIZE),
+        "2": load_texture("assets/img/blocks/grass.png",  BLOCK_SIZE, BLOCK_SIZE),
+        "3": load_texture("assets/img/blocks/tree.png",   BLOCK_SIZE, BLOCK_SIZE),
         "4": load_texture("assets/img/blocks/grass1.png", BLOCK_SIZE, BLOCK_SIZE),
-        "5": load_texture("assets/img/blocks/block_5.png", BLOCK_SIZE, BLOCK_SIZE),
+        "5": load_texture("assets/img/blocks/block_5.png",BLOCK_SIZE, BLOCK_SIZE),
         "empty": None,
     }
 
-    # --- Load Animated Sprites ---
-    # Block "6" uses ARW2DSprite2.png (14 frames, each 24x24)
+    # Load animated sprites
     TEXTURES["6"] = AnimatedSprite(
         "assets/img/blocks/ARW2DSprite2.png",
         frame_width=24,
@@ -51,7 +59,6 @@ def main():
         frame_delay=1.05
     )
 
-    # Block "7" uses enemiSP.png (3 frames, each 68x68)
     TEXTURES["7"] = AnimatedSprite(
         "assets/img/enemies/enemiSP.png",
         frame_width=68,
@@ -60,20 +67,23 @@ def main():
         frame_delay=1.19
     )
 
-    # --- Create World and Player ---
+    # Create the world and player
     world = World("assets/maps/map.txt")
     player_start_x, player_start_y, player_layer = world.player_start_pos
     player = Player(
-        player_start_x,
-        player_start_y,
+        x=player_start_x,
+        y=player_start_y,
         layer=player_layer,
         speed=10,
         texture_path="assets/img/blocks/player.png"
     )
 
     camera = Camera()
-    running = True
 
+    # -----------------------------------------------------
+    # 3) MAIN LOOP
+    # -----------------------------------------------------
+    running = True
     while running:
         dt = clock.tick(FPS) / 1000.0  # Delta time in seconds
 
@@ -81,51 +91,73 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        # --- Handle Keyboard Input ---
-        keys = pygame.key.get_pressed()
-        dx, dy = 0, 0
-        if keys[pygame.K_a]:
-            dx = -1
-        if keys[pygame.K_d]:
-            dx = 1
-        if keys[pygame.K_w]:
-            dy = -1
-        if keys[pygame.K_s]:
-            dy = 1
+            # --- MENU EVENTS ---
+            if menu_active:
+                menu.handle_event(event)
+                # If user clicked "Continue", we move to the game state
+                if menu.start_game:
+                    menu_active = False
+                    game_active = True
 
-        # Move the player
-        player.move(dx, dy, dt, world)
+        # -------------------------------------------------
+        # MENU MODE
+        # -------------------------------------------------
+        if menu_active:
+            # We can update menu animations (if any)
+            menu.update(dt)
 
-        # Jump between layers
-        if keys[pygame.K_SPACE]:
-            player.jump("up", world)
-        if keys[pygame.K_LSHIFT]:
-            player.jump("down", world)
+            # Draw the menu
+            screen.fill((30, 30, 30))  # Dark background for the menu
+            menu.draw(screen)
+            pygame.display.flip()
+            continue  # Skip the rest of the loop (game logic)
 
-        # --- Update Camera ---
-        # Convert player's grid coords to isometric coords
-        player_iso_x = (player.grid_x - player.grid_y) * BLOCK_SIZE // 2 + SCREEN_WIDTH // 2
-        player_iso_y = (
-            (player.grid_x + player.grid_y) * BLOCK_SIZE // 4
-            - player.layer * BLOCK_SIZE // 2
-            + int(SCREEN_HEIGHT // 3.5)
-        )
-        camera.update(player_iso_x, player_iso_y)
+        # -------------------------------------------------
+        # GAME MODE
+        # -------------------------------------------------
+        if game_active:
+            # --- Handle game input ---
+            keys = pygame.key.get_pressed()
+            dx, dy = 0, 0
+            if keys[pygame.K_a]:
+                dx = -1
+            if keys[pygame.K_d]:
+                dx = 1
+            if keys[pygame.K_w]:
+                dy = -1
+            if keys[pygame.K_s]:
+                dy = 1
 
-        # --- Update Animated Sprites ---
-        if "6" in TEXTURES and isinstance(TEXTURES["6"], AnimatedSprite):
-            TEXTURES["6"].update(dt)
+            # Move the player
+            player.move(dx, dy, dt, world)
 
-        # Make sure we check "7" in TEXTURES, not "6"
-        if "7" in TEXTURES and isinstance(TEXTURES["7"], AnimatedSprite):
-            TEXTURES["7"].update(dt)
+            # Jump between layers
+            if keys[pygame.K_SPACE]:
+                player.jump("up", world)
+            if keys[pygame.K_LSHIFT]:
+                player.jump("down", world)
 
-        # --- Render ---
-        screen.fill(BACKGROUND_COLOR)
-        world.render(screen, TEXTURES, camera)
-        player.draw(screen, camera)
+            # Update camera based on player's isometric position
+            player_iso_x = (player.grid_x - player.grid_y) * BLOCK_SIZE // 2 + SCREEN_WIDTH // 2
+            player_iso_y = (
+                (player.grid_x + player.grid_y) * BLOCK_SIZE // 4
+                - player.layer * BLOCK_SIZE // 2
+                + int(SCREEN_HEIGHT // 3.5)
+            )
+            camera.update(player_iso_x, player_iso_y)
 
-        pygame.display.flip()
+            # Update animated sprites
+            if "6" in TEXTURES and isinstance(TEXTURES["6"], AnimatedSprite):
+                TEXTURES["6"].update(dt)
+            if "7" in TEXTURES and isinstance(TEXTURES["7"], AnimatedSprite):
+                TEXTURES["7"].update(dt)
+
+            # --- Render the game ---
+            screen.fill(BACKGROUND_COLOR)
+            world.render(screen, TEXTURES, camera)
+            player.draw(screen, camera)
+
+            pygame.display.flip()
 
     pygame.quit()
     sys.exit()
