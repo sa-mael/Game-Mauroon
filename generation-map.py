@@ -1,140 +1,119 @@
 import random
 
-# -------------------------------------------------------
-# CONFIG
-# -------------------------------------------------------
+# Constants
 MAP_WIDTH = 142
 MAP_HEIGHT = 142
+LAYERS = 9  # 0-8 layers
 
-# We’ll generate these layers as an example:
-#   Layer 0: Very hard rock (1)
-#   Layer 1: Very hard rock (1)
-#   Layer 2: Hard rock (2)
-#   Layer 3: Possibly water / grass / etc.
-#   ...
-#   We'll go up to, say, Layer 7 or 8 as you requested.
-TOTAL_LAYERS = 9  # You can go higher if needed
+# Initialize map layers
+map_layers = [[[0 for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)] for _ in range(LAYERS)]
 
-# Helper: Turn a 2D list of ints into lines like "1.1.1.2.2.1"
-def format_layer(layer_data):
-    lines = []
-    for row in layer_data:
-        line_str = ".".join(str(val) for val in row)
-        lines.append(line_str)
-    return "\n".join(lines)
+# Helper Functions
+def fill_layer(layer_index, value):
+    """Fill an entire layer with a single value."""
+    for y in range(MAP_HEIGHT):
+        for x in range(MAP_WIDTH):
+            map_layers[layer_index][y][x] = value
 
-def generate_layer(layer_index):
-    """
-    Return a 2D list (MAP_HEIGHT x MAP_WIDTH) 
-    for the given layer_index, using your ID scheme.
-    """
-    # Create a default fill
-    # e.g. fill everything with 1 (very hard rock) for lower layers
-    layer_map = [[1 for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
-    
-    # Example logic:
-    if layer_index == 0 or layer_index == 1:
-        # Fill everything with "1" = very hard rock
-        pass
-    
-    elif layer_index == 2:
-        # Fill everything with "2" = hard rock
-        for y in range(MAP_HEIGHT):
-            for x in range(MAP_WIDTH):
-                layer_map[y][x] = 2
-    
-    elif layer_index == 3:
-        # Let’s say we fill with "3" = regular rock
-        for y in range(MAP_HEIGHT):
-            for x in range(MAP_WIDTH):
-                layer_map[y][x] = 3
-    
-    elif layer_index == 4:
-        # Fill with "4" = dirt
-        for y in range(MAP_HEIGHT):
-            for x in range(MAP_WIDTH):
-                layer_map[y][x] = 4
-    
-    elif layer_index == 5:
-        # Example water layer: "5" = water
-        # We can create a random "river" or "lake" area
-        # For demonstration, let's randomly fill part of the layer with water.
-        # But you’ll adapt it to your real river/lake logic.
-        for y in range(MAP_HEIGHT):
-            for x in range(MAP_WIDTH):
-                # 1/5 chance to be water, else 0
-                # (In your real code you might carve a path for the river or lake).
-                rand_val = random.random()
-                if rand_val < 0.2:
-                    layer_map[y][x] = 5
-                else:
-                    layer_map[y][x] = 0  # 0 means "no block"
-    
-    elif layer_index == 6:
-        # "6" = grass
-        for y in range(MAP_HEIGHT):
-            for x in range(MAP_WIDTH):
-                layer_map[y][x] = 6
-    
-    elif layer_index == 7:
-        # Mix ramps (12, 13) and some special block IDs (14-17).
-        # Let’s do a simple pattern in the top-left corner as a demo.
-        for y in range(MAP_HEIGHT):
-            for x in range(MAP_WIDTH):
-                # We'll fill with "6" = grass by default
-                layer_map[y][x] = 6
-                
-        # Add a diagonal line of ramps
-        for i in range(min(MAP_WIDTH, MAP_HEIGHT)):
-            if i % 2 == 0:
-                layer_map[i][i] = 12  # up-down ramp
-            else:
-                layer_map[i][i] = 13  # left-right ramp
-        
-        # Add a small 4x4 block of "energy field" in top-left
-        for y2 in range(4):
-            for x2 in range(4):
-                # We'll vary 14,15,16,17 just for demonstration
-                layer_map[y2][x2] = random.choice([14, 15, 16, 17])
-    
-    elif layer_index == 8:
-        # Suppose layer 8 is for "torch (18)" or "tent (19)".
-        # We'll randomly place them:
-        layer_map = [[0 for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
-        
-        # Place random torches
-        for _ in range(20):
-            rx = random.randint(0, MAP_WIDTH - 1)
-            ry = random.randint(0, MAP_HEIGHT - 1)
-            layer_map[ry][rx] = 18  # torch
-        
-        # Place random tents
-        for _ in range(5):
-            rx = random.randint(0, MAP_WIDTH - 1)
-            ry = random.randint(0, MAP_HEIGHT - 1)
-            layer_map[ry][rx] = 19  # tent
-    
-    return layer_map
+def generate_river():
+    """Generate a vertically aligned river."""
+    river_x = random.randint(MAP_WIDTH // 4, MAP_WIDTH * 3 // 4)  # River starting x-coordinate
+    river_width = 1  # Start with 1 block wide at the base
 
-def generate_map_txt(filename="map.txt"):
-    """
-    Generates a multi-layer map file with the format:
-      # Layer 0
-      1.1.1.1...
-      1.1.1.1...
-      ...
-      # Layer 1
-      ...
-    """
-    with open(filename, "w") as f:
-        for layer_idx in range(TOTAL_LAYERS):
-            # Write the layer header
-            f.write(f"# Layer {layer_idx}\n")
-            data_2d = generate_layer(layer_idx)
-            # Convert 2D list to lines "X.X.X.X"
-            layer_str = format_layer(data_2d)
-            f.write(layer_str + "\n")
+    for z in range(3, 8):  # Layers 3 to 7
+        for y in range(MAP_HEIGHT):
+            for offset in range(-river_width // 2, river_width // 2 + 1):
+                if 0 <= river_x + offset < MAP_WIDTH:
+                    map_layers[z][y][river_x + offset] = 5  # Water
+            # Meander slightly
+            river_x += random.choice([-1, 0, 1])
+            river_x = max(0, min(MAP_WIDTH - 1, river_x))  # Keep within bounds
+        # Increase width as we move up
+        river_width = min(river_width + 1, 5)
 
-if __name__ == "__main__":
-    generate_map_txt("generated_map.txt")
-    print("Map generated: 'generated_map.txt'")
+def generate_lakes():
+    """Generate lakes."""
+    for _ in range(4):  # Number of lakes
+        center_x = random.randint(20, MAP_WIDTH - 20)
+        center_y = random.randint(20, MAP_HEIGHT - 20)
+        lake_size = random.randint(9, 21)
+
+        for _ in range(lake_size):
+            lx = center_x + random.randint(-4, 4)
+            ly = center_y + random.randint(-4, 4)
+            if 0 <= lx < MAP_WIDTH and 0 <= ly < MAP_HEIGHT:
+                for z in range(5, 8):  # Lakes span layers 5–7
+                    map_layers[z][ly][lx] = 5
+
+def generate_forest():
+    """Generate forests."""
+    for _ in range(8):  # Number of forests
+        center_x = random.randint(10, MAP_WIDTH - 10)
+        center_y = random.randint(10, MAP_HEIGHT - 10)
+        tree_count = random.randint(5, 43)
+
+        for _ in range(tree_count):
+            tx = center_x + random.randint(-3, 3)
+            ty = center_y + random.randint(-3, 3)
+            if 0 <= tx < MAP_WIDTH and 0 <= ty < MAP_HEIGHT:
+                map_layers[7][ty][tx] = random.choice([8, 9])  # Dark or Light Wood
+
+def generate_paths():
+    """Generate 2-block-wide paths."""
+    for _ in range(6):  # Number of paths
+        x, y = random.randint(0, MAP_WIDTH - 1), random.randint(0, MAP_HEIGHT - 1)
+        for _ in range(50):  # Path length
+            map_layers[7][y][x] = 12  # Path (Ramp up-down)
+            for offset in range(2):  # Make path 2 blocks wide
+                if 0 <= x + offset < MAP_WIDTH:
+                    map_layers[7][y][x + offset] = 12
+            x += random.choice([-1, 1])
+            y += random.choice([-1, 1])
+            x, y = max(0, min(MAP_WIDTH - 1, x)), max(0, min(MAP_HEIGHT - 1, y))
+
+def generate_energy_fields():
+    """Generate energy fields."""
+    quadrants = [
+        (14, 0, MAP_WIDTH // 2, 0, MAP_HEIGHT // 2),  # Upper-left
+        (15, MAP_WIDTH // 2, MAP_WIDTH, 0, MAP_HEIGHT // 2),  # Upper-right
+        (16, 0, MAP_WIDTH // 2, MAP_HEIGHT // 2, MAP_HEIGHT),  # Lower-left
+        (17, MAP_WIDTH // 2, MAP_WIDTH, MAP_HEIGHT // 2, MAP_HEIGHT),  # Lower-right
+    ]
+    for value, x1, x2, y1, y2 in quadrants:
+        for _ in range(15):  # Points per quadrant
+            x, y = random.randint(x1, x2 - 1), random.randint(y1, y2 - 1)
+            map_layers[7][y][x] = value
+
+def add_surface_objects():
+    """Add torches and tents to layer 8."""
+    for _ in range(10):  # Add torches
+        x, y = random.randint(0, MAP_WIDTH - 1), random.randint(0, MAP_HEIGHT - 1)
+        map_layers[8][y][x] = 8  # Torch
+
+    for _ in range(5):  # Add tents
+        x, y = random.randint(0, MAP_WIDTH - 1), random.randint(0, MAP_HEIGHT - 1)
+        map_layers[8][y][x] = 9  # Tent
+
+# Generate Terrain
+fill_layer(0, 1)  # Very Hard Rock
+fill_layer(1, 1)
+fill_layer(2, 1)
+fill_layer(3, 2)  # Hard Rock
+fill_layer(4, 2)
+fill_layer(5, 3)  # Regular Rock
+fill_layer(6, 4)  # Dirt
+
+generate_river()
+generate_lakes()
+generate_forest()
+generate_paths()
+generate_energy_fields()
+add_surface_objects()
+
+# Save Map to File
+with open("generated_map.txt", "w") as f:
+    for z, layer in enumerate(map_layers):
+        f.write(f"# Layer {z}\n")
+        for row in layer:
+            f.write(".".join(map(str, row)) + "\n")
+        f.write("\n")

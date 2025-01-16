@@ -71,7 +71,7 @@ def main():
     )
 
     # Create the world and player
-    world = World("assets/maps/map.txt")
+    world = World("assets/maps/generated_map.txt")
     player_start_x, player_start_y, player_layer = world.player_start_pos
     player = Player(
         x=player_start_x,
