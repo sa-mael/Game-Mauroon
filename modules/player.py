@@ -4,7 +4,7 @@ import sys
 from modules.config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Player:
-    def __init__(self, x, y, layer=1, speed=10, texture_path="assets/img/blocks/player.png"):
+    def __init__(self, x, y, layer=8, speed=10, texture_path="assets/img/blocks/player.png"):
         """
         :param x, y: starting tile coordinates in grid space
         :param layer: which layer of the world
