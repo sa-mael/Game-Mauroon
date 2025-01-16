@@ -42,13 +42,14 @@ def main():
     # -----------------------------------------------------
     # Load static textures
     TEXTURES = {
-        "1": load_texture("assets/img/blocks/clear water.png",  BLOCK_SIZE, BLOCK_SIZE),
-        "9": load_texture("assets/img/blocks/stone.png",  BLOCK_SIZE, BLOCK_SIZE),
-        "2": load_texture("assets/img/blocks/grass.png",  BLOCK_SIZE, BLOCK_SIZE),
-        "3": load_texture("assets/img/blocks/tree.png",   BLOCK_SIZE, BLOCK_SIZE),
-        "4": load_texture("assets/img/blocks/grass1.png", BLOCK_SIZE, BLOCK_SIZE),
-        "5": load_texture("assets/img/blocks/block_5.png",BLOCK_SIZE, BLOCK_SIZE),
-        "8": load_texture("assets/img/blocks/block_6.png",44, 88),
+        "1": load_texture("assets/img/blocks/stone.png",  BLOCK_SIZE, BLOCK_SIZE),
+        "2": load_texture("assets/img/blocks/lite stone.png",  BLOCK_SIZE, BLOCK_SIZE),
+        "3": load_texture("assets/img/blocks/hard grass.png",  BLOCK_SIZE, BLOCK_SIZE),
+        "4": load_texture("assets/img/blocks/grass.png",   BLOCK_SIZE, BLOCK_SIZE),
+        "5": load_texture("assets/img/blocks/clear water.png", BLOCK_SIZE, BLOCK_SIZE),
+        "6": load_texture("assets/img/blocks/grass lo.png",BLOCK_SIZE, BLOCK_SIZE),
+        "7": load_texture("assets/img/blocks/flowers.png", BLOCK_SIZE, BLOCK_SIZE),
+        "8": load_texture("assets/img/blocks/trea.png",44, 88),
         
         "empty": None,
     }
