@@ -62,7 +62,7 @@ class World:
          for layer_index, layer in enumerate(self.map_data):
              for y, row in enumerate(layer):
                  for x, block in enumerate(row):
-                     if block == 5:  # Found player start
+                     if block == 14:  # Found player start
                          return (x, y, layer_index)
          return (0, 0, 1)  # Default spawn
 

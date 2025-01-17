@@ -54,23 +54,27 @@ def main():
         "7": load_texture("assets/img/blocks/flowers.png", 44, 88),
         "8": load_texture("assets/img/blocks/trea2.png",88, 176),
         "9": load_texture("assets/img/blocks/light wood.png",44, 88),
-        "10": load_texture("assets/img/blocks/tall grass.png",BLOCK_SIZE, BLOCK_SIZE),
+        "10": load_texture("assets/img/blocks/start.png",BLOCK_SIZE, BLOCK_SIZE),
         "11": load_texture("assets/img/blocks/rock.png",BLOCK_SIZE, BLOCK_SIZE),
         "12": load_texture("assets/img/blocks/t forward.png",BLOCK_SIZE, BLOCK_SIZE),
         "13": load_texture("assets/img/blocks/t sides.png",BLOCK_SIZE, BLOCK_SIZE),
+        "14": load_texture("assets/img/blocks/b por.png",BLOCK_SIZE, BLOCK_SIZE),
+        "15": load_texture("assets/img/blocks/t por.png",BLOCK_SIZE, BLOCK_SIZE),
+        "16": load_texture("assets/img/blocks/l por.png",BLOCK_SIZE, BLOCK_SIZE),
+        "17": load_texture("assets/img/blocks/r por.png",BLOCK_SIZE, BLOCK_SIZE),
         
         "empty": None,
     }
 
-    # Load animated sprites
-    TEXTURES["2"] = AnimatedSprite(
-        "assets/img/blocks/clear water f.png",
-        frame_width=24,
-        frame_height=24,
-        num_frames=5,
-        frame_delay=1.05
-    )
-    # Load animated sprites
+  #  # Load animated sprites
+  #  TEXTURES["5"] = AnimatedSprite(
+  #      "assets/img/blocks/clear water f.png",
+  #      frame_width=24,
+  #      frame_height=24,
+  #      num_frames=5,
+  #      frame_delay=1.05
+  #  )
+  #  # Load animated sprites
     TEXTURES["6"] = AnimatedSprite(
         "assets/img/blocks/ARW2DSprite2.png",
         frame_width=24,
