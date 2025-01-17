@@ -4,7 +4,7 @@ import sys
 from modules.config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Player:
-    def __init__(self, x, y, layer=8, speed=10, texture_path="assets/img/blocks/player.png"):
+    def __init__(self, x, y, layer=8, speed=30, texture_path="assets/img/blocks/player.png"):
         """
         :param x, y: starting tile coordinates in grid space
         :param layer: which layer of the world
@@ -46,7 +46,7 @@ class Player:
         int_x = int(self.grid_x)
         int_y = int(self.grid_y)
 
-        if direction == "up" and self.layer > 0:
+        if direction == "up" and self.layer > 6:
             self.layer -= 1
         elif direction == "down" and self.layer < (world.layers - 1):
             self.layer += 1

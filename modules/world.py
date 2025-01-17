@@ -18,7 +18,7 @@ class World:
             # Layer 2
             ...
         """
-        self.layers = 9 # or however many layers your map.txt has
+        self.layers = 8 # or however many layers your map.txt has
         self.map_data = self.load_map_from_file(map_file)
         self.player_start_pos = self.find_player_start_position()
 

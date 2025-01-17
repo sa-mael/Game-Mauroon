@@ -36,7 +36,7 @@ def generate_lakes():
     for _ in range(4):  # Number of lakes
         center_x = random.randint(20, MAP_WIDTH - 20)
         center_y = random.randint(20, MAP_HEIGHT - 20)
-        lake_size = random.randint(9, 21)
+        lake_size = random.randint(9, 20)
 
         for _ in range(lake_size):
             lx = center_x + random.randint(-4, 4)

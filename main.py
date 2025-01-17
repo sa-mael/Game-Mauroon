@@ -1,4 +1,7 @@
 # main.py
+# rosty 
+# game Mauroon
+ 
 import pygame
 import sys
 
@@ -27,7 +30,7 @@ def load_texture(path, width, height):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Isometric World with Menu")
+    pygame.display.set_caption("Isometric - game Mauroon")
     clock = pygame.time.Clock()
 
     # -----------------------------------------------------
@@ -49,7 +52,7 @@ def main():
         "5": load_texture("assets/img/blocks/clear water.png", BLOCK_SIZE, BLOCK_SIZE),
         "6": load_texture("assets/img/blocks/grass lo.png",BLOCK_SIZE, BLOCK_SIZE),
         "7": load_texture("assets/img/blocks/flowers.png", 44, 88),
-        "8": load_texture("assets/img/blocks/trea.png",44, 88),
+        "8": load_texture("assets/img/blocks/trea2.png",88, 176),
         "9": load_texture("assets/img/blocks/light wood.png",44, 88),
         "10": load_texture("assets/img/blocks/tall grass.png",BLOCK_SIZE, BLOCK_SIZE),
         "11": load_texture("assets/img/blocks/rock.png",BLOCK_SIZE, BLOCK_SIZE),
@@ -59,6 +62,14 @@ def main():
         "empty": None,
     }
 
+    # Load animated sprites
+    TEXTURES["2"] = AnimatedSprite(
+        "assets/img/blocks/clear water f.png",
+        frame_width=24,
+        frame_height=24,
+        num_frames=5,
+        frame_delay=1.05
+    )
     # Load animated sprites
     TEXTURES["6"] = AnimatedSprite(
         "assets/img/blocks/ARW2DSprite2.png",
