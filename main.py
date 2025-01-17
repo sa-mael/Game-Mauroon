@@ -52,6 +52,9 @@ def main():
         "8": load_texture("assets/img/blocks/trea.png",44, 88),
         "9": load_texture("assets/img/blocks/light wood.png",44, 88),
         "10": load_texture("assets/img/blocks/tall grass.png",BLOCK_SIZE, BLOCK_SIZE),
+        "11": load_texture("assets/img/blocks/rock.png",BLOCK_SIZE, BLOCK_SIZE),
+        "12": load_texture("assets/img/blocks/t forward.png",BLOCK_SIZE, BLOCK_SIZE),
+        "13": load_texture("assets/img/blocks/t sides.png",BLOCK_SIZE, BLOCK_SIZE),
         
         "empty": None,
     }
