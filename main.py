@@ -48,8 +48,10 @@ def main():
         "4": load_texture("assets/img/blocks/grass.png",   BLOCK_SIZE, BLOCK_SIZE),
         "5": load_texture("assets/img/blocks/clear water.png", BLOCK_SIZE, BLOCK_SIZE),
         "6": load_texture("assets/img/blocks/grass lo.png",BLOCK_SIZE, BLOCK_SIZE),
-        "7": load_texture("assets/img/blocks/flowers.png", BLOCK_SIZE, BLOCK_SIZE),
+        "7": load_texture("assets/img/blocks/flowers.png", 44,88 ),
         "8": load_texture("assets/img/blocks/trea.png",44, 88),
+        "9": load_texture("assets/img/blocks/light wood.png",44, 88),
+        "10": load_texture("assets/img/blocks/ tall grass.png",BLOCK_SIZE, BLOCK_SIZE),
         
         "empty": None,
     }
