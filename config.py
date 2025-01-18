@@ -3,14 +3,14 @@
 # Screen settings
 SCREEN_WIDTH = 1360
 SCREEN_HEIGHT = 940
-FPS = 60
+FPS = 160
 
 # Blocks
-BLOCK_SIZE = 22
+BLOCK_SIZE = 32
 scaler = 2  # Initial scale
 
 # Player settings
-PLAYER_SIZE = 40  # Size of the player sprite in pixels
+PLAYER_SIZE = 80  # Size of the player sprite in pixels
 PLAYER_SPEED = 100  # Player movement speed
 
 # Zoom settings

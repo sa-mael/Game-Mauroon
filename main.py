@@ -6,7 +6,7 @@ import pygame
 import sys
 
 # --- Import your isometric modules ---
-from modules.config import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR, FPS, BLOCK_SIZE
+from modules.config import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR, FPS, BLOCK_SIZE ,PLAYER_SIZE 
 from modules.camera import Camera
 from modules.world import World
 from modules.player import Player
@@ -27,8 +27,8 @@ def load_texture(path, width, height):
         print(f"Error loading texture '{path}': {e}")
         sys.exit()
 
-def main():
-    pygame.init()
+def main(): 
+    pygame.init() 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Isometric - game Mauroon")
     clock = pygame.time.Clock()
@@ -162,10 +162,10 @@ def main():
                 player.jump("down", world)
 
             # Update camera based on player's isometric position
-            player_iso_x = (player.grid_x - player.grid_y) * BLOCK_SIZE // 2 + SCREEN_WIDTH // 2
+            player_iso_x = (player.grid_x - player.grid_y) * PLAYER_SIZE // 2 + SCREEN_WIDTH // 2
             player_iso_y = (
-                (player.grid_x + player.grid_y) * BLOCK_SIZE // 4
-                - player.layer * BLOCK_SIZE // 2
+                (player.grid_x + player.grid_y) * PLAYER_SIZE // 4
+                - player.layer * PLAYER_SIZE // 2
                 + int(SCREEN_HEIGHT // 3.5)
             )
             camera.update(player_iso_x, player_iso_y)

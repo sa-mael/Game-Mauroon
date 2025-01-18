@@ -1,7 +1,7 @@
 # modules/player.py
 import pygame
 import sys
-from modules.config import BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
+from modules.config import PLAYER_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Player:
     def __init__(self, x, y, layer=8, speed=10, texture_path="assets/img/blocks/player.png"):
@@ -19,7 +19,7 @@ class Player:
         # Load player texture
         try:
             image = pygame.image.load(texture_path).convert_alpha()
-            self.texture = pygame.transform.scale(image, (BLOCK_SIZE, BLOCK_SIZE))
+            self.texture = pygame.transform.scale(image, (PLAYER_SIZE, PLAYER_SIZE))
         except pygame.error as e:
             print(f"Error loading player texture '{texture_path}': {e}")
             sys.exit()
@@ -55,10 +55,10 @@ class Player:
         """
         Convert (grid_x, grid_y) to isometric and draw the player.
         """
-        iso_x = (self.grid_x - self.grid_y) * BLOCK_SIZE // 2
-        iso_y = (self.grid_x + self.grid_y) * BLOCK_SIZE // 4 - self.layer * BLOCK_SIZE // 2
+        iso_x = (self.grid_x - self.grid_y) * PLAYER_SIZE // 2
+        iso_y = (self.grid_x + self.grid_y) * PLAYER_SIZE // 4 - self.layer * PLAYER_SIZE // 2
 
-        draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x - BLOCK_SIZE // 2
-        draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y - BLOCK_SIZE // 2
+        draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x - PLAYER_SIZE // 2
+        draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y - PLAYER_SIZE // 2
 
         surface.blit(self.texture, (draw_x, draw_y))
