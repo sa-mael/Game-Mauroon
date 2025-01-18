@@ -2,7 +2,7 @@
 
 import pygame
 import sys
-<<<<<<< Updated upstream
+
 from modules.config import PLAYER_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Player:
@@ -13,7 +13,7 @@ class Player:
         :param speed: movement speed
         :param texture_path: path to player sprite
         """
-=======
+
 from modules.config import PLAYER_SIZE, BLOCK_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT
 
 class Player:
@@ -21,7 +21,7 @@ class Player:
     Manages the player's position, movement, layer, and drawing.
     """
     def __init__(self, x, y, layer, speed, texture_path="assets/img/blocks/player.png"):
->>>>>>> Stashed changes
+
         self.grid_x = x
         self.grid_y = y
         self.layer = layer
@@ -29,14 +29,13 @@ class Player:
 
         # Load the player sprite
         try:
-<<<<<<< Updated upstream
             image = pygame.image.load(texture_path).convert_alpha()
             self.texture = pygame.transform.scale(image, (PLAYER_SIZE, PLAYER_SIZE))
-=======
+
             self.texture = pygame.image.load(texture_path).convert_alpha()
             # Scale to your desired size
             self.texture = pygame.transform.scale(self.texture, (PLAYER_SIZE, PLAYER_SIZE))
->>>>>>> Stashed changes
+
         except pygame.error as e:
             print(f"Error loading player texture '{texture_path}': {e}")
             sys.exit()
@@ -82,12 +81,12 @@ class Player:
         int_x = int(self.grid_x)
         int_y = int(self.grid_y)
 
-<<<<<<< Updated upstream
+
         if direction == "up" and self.layer > 6:
             self.layer -= 1
         elif direction == "down" and self.layer < (world.layers - 1):
             self.layer += 1
-=======
+
         # If jumping 'up' means going to layer -1
         if direction == "up" and self.layer > 0:
             # Check the tile in the layer above
@@ -103,7 +102,7 @@ class Player:
                 self.layer += 1
             else:
                 print("No block below (cannot jump down).")
->>>>>>> Stashed changes
+
 
     def draw(self, surface, camera):
         """
@@ -113,12 +112,7 @@ class Player:
         iso_x = (self.grid_x - self.grid_y) * PLAYER_SIZE // 2
         iso_y = (self.grid_x + self.grid_y) * PLAYER_SIZE // 4 - self.layer * PLAYER_SIZE // 2
 
-<<<<<<< Updated upstream
         draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x - PLAYER_SIZE // 2
         draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y - PLAYER_SIZE // 2
-=======
-        draw_x = iso_x + SCREEN_WIDTH // 2 + camera.offset_x - (PLAYER_SIZE // 2)
-        draw_y = iso_y + int(SCREEN_HEIGHT // 3.5) + camera.offset_y - (PLAYER_SIZE // 2)
->>>>>>> Stashed changes
-
+    
         surface.blit(self.texture, (draw_x, draw_y))
